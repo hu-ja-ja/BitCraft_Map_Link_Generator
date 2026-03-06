@@ -1,0 +1,720 @@
+#仮yaml table 後で変更するかも
+#spawn:が書いてないものはtrue
+
+## enemyId
+
+Monster:
+  - id: 17
+    name: Jakyl
+  - id: 18
+    name: Alpha Jakyl
+  - id: 19
+    name: King Jakyl
+  - id: 20
+    name: Skitch
+  - id: 21
+    name: Desert Crab
+  - id: 22
+    name: Frost Crab
+  - id: 23
+    name: Terratoad
+  - id: 24
+    name: Swamp Terratoad
+  - id: 26
+    name: Umbura
+  - id: 27
+    name: Alpha Umbura
+  - id: 28
+    name: King Umbura
+  - id: 29
+    name: Drone
+  - id: 30
+    name: Soldier
+  - id: 31
+    name: Queen
+
+Animal:
+  T1:
+    - id: 2
+  T2:
+    - id: 5
+  T3:
+    - id: 7
+    - id: 8
+  T4:
+    - id: 4
+    - id: 9
+    - id: 10
+    - id: 11
+  T5:
+    - id: 3
+    - id: 13
+  T6:
+    - id: 6
+  T7:
+    - id: 15
+  T8:
+    - id: 12
+  T9:
+    - id: 14
+  T10:
+    - id: 16
+
+## resourceId
+
+Unique:
+  Ancient:
+    - id: 1774107141
+    - id: 1823420883
+  Resource:
+    - id: 1
+      name: Sticks
+    - id: 38
+      name: Flint Pile
+    - id: 72
+      name: Wild Grains
+    - id: 156
+      name: Wild Starbulb Plant
+    - id: 158
+      name: Salt Deposit
+  Den:
+    - id: 849939303
+      spawn: false #多分
+    - id: 1643773046
+    - id: 427032893
+      spawn: false #多分
+    - id: 1091832489
+      spawn: false #多分
+    - id: 2145270439
+    - id: 158059491
+      spawn: false #多分
+
+Baitfish:
+  T1:
+    - id: 1110000
+  T2:
+    - id: 2110000
+  T3:
+    - id: 3110000
+  T4:
+    - id: 4110000
+  T5:
+    - id: 5110000
+  T6:
+    - id: 6110000
+  T7:
+    - id: 1262898141
+  T8:
+    - id: 1558728865
+  T9:
+    - id: 756579517
+  T10:
+    - id: 1283711960
+
+Berry:
+  T1:
+    - id: 73
+  T2:
+    - id: 80
+  T3:
+    - id: 78
+  T4:
+    - id: 715451185
+  T5:
+    - id: 75
+  T6:
+    - id: 368570220
+    - id: 875245395
+      spawn: false
+  T7:
+    - id: 582591086
+      spawn: false
+    - id: 1579330042
+  T8:
+    - id: 84
+    - id: 1592739620
+      spawn: false
+  T9:
+    - id: 963451338
+      spawn: false
+    - id: 1954847232
+  T10:
+    - id: 1467799531
+    - id: 2110330714
+      spawn: false
+
+Clay:
+  T1:
+    - id: 66
+  T2:
+    - id: 67
+  T3:
+    - id: 68
+  T4:
+    - id: 69
+  T5:
+    - id: 70
+  T6:
+    - id: 71 #雪山
+    - id: 702104027 #ジャングル
+  T7:
+    - id: 834195042
+  T8:
+    - id: 505488132
+  T9:
+    - id: 1526038154
+  T10:
+    - id: 1023127595
+
+FiberPlant:
+  T1:
+    - id: 2
+  T2:
+    - id: 125
+    - id: 2140000
+      spawn: false
+    - id: 127
+      spawn: false
+  T3:
+    - id: 130
+    - id: 131
+      spawn: false
+    - id: 132
+      spawn: false
+  T4:
+    - id: 134
+      spawn: false
+    - id: 1917261269
+  T5:
+    - id: 135 #松の森
+    - id: 1005142992 #沼地
+  T6:
+    - id: 139 #紅葉、ジャングル、生きた森
+    - id: 762731569 #沼地、ジャングル
+  T7:
+    - id: 128
+    - id: 1981854097
+      spawn: false
+  T8:
+    - id: 137
+    - id: 1125409070
+      spawn: false
+  T9:
+    - id: 1458811602
+    - id: 189403270
+      spawn: false
+  T10:
+    - id: 473828668
+    - id: 1489491467
+      spawn: false
+
+Flower:
+  T1:
+    - id: 88
+      spawn: false
+    - id: 89 #静かな森
+    - id: 90
+      spawn: false
+    - id: 91
+      spawn: false
+    - id: 2144918116 #静かな森、涼しい草原
+  T2:
+    - id: 87
+    - id: 94
+      spawn: false
+  T3:
+    - id: 93
+    - id: 95
+      spawn: false
+    - id: 96
+      spawn: false
+    - id: 97
+      spawn: false
+  T4:
+    - id: 92
+    - id: 100
+      spawn: false
+  T5:
+    - id: 98 #紅葉、沼地、砂漠、ジャングル
+    - id: 103
+      spawn: false
+    - id: 138 #沼地、ジャングル
+  T6:
+    - id: 99 #砂漠
+    - id: 101 #涼しい草原、沼地、ツンドラ
+  T7:
+    - id: 104 #紅葉、砂漠、ツンドラ
+    - id: 129 #暗い森、岩山、ツンドラ
+    - id: 723013812
+      spawn: false
+  T8:
+    - id: 105
+    - id: 1264935363
+      spawn: false
+  T9:
+    - id: 86
+    - id: 284200468
+      spawn: false
+  T10:
+    - id: 102
+    - id: 1986100626
+      spawn: false
+
+LakeFish:
+  T1:
+    - id: 1110001
+  T2:
+    - id: 2110001
+  T3:
+    - id: 3110001
+  T4:
+    - id: 4110001
+  T5:
+    - id: 5110001
+  T6:
+    - id: 6110001
+  T7:
+    - id: 904022325
+  T8:
+    - id: 722506673
+  T9:
+    - id: 1157887989
+  T10:
+    - id: 374159821
+
+Mushroom:
+  T1:
+    - id: 74
+  T2:
+    - id: 79
+  T3:
+    - id: 1072537375
+  T4:
+    - id: 532077242
+  T5:
+    - id: 82
+  T6:
+    - id: 81
+  T7:
+    - id: 76
+    - id: 586543849
+      spawn: false
+  T8:
+    - id: 85
+    - id: 1657885116
+      spawn: false
+  T9:
+    - id: 83
+    - id: 1742959882
+      spawn: false
+  T10:
+    - id: 1637125903
+      spawn: false
+    - id: 2089197796
+
+OceanFish:
+  T1:
+    - id: 1110002
+    - id: 1110003 #chummed
+  T2:
+    - id: 2110002
+    - id: 2110003 #chummed
+  T3:
+    - id: 3110002
+    - id: 3110003 #chummed
+  T4:
+    - id: 4110002
+    - id: 4110003 #chummed
+  T5:
+    - id: 5110002
+    - id: 5110003 #chummed
+  T6:
+    - id: 6110002
+    - id: 6110003 #chummed
+  T7:
+    - id: 5045122
+    - id: 826362353 #chummed
+  T8:
+    - id: 2390533
+    - id: 509854054 #chummed
+  T9:
+    - id: 1812221896
+    - id: 1141184831 #chummed
+  T10:
+    - id: 424796674
+    - id: 1006230316 #chummed
+
+OreVein:
+  T1:
+    - id: 59 #outcrop
+    - id: 218270468 #interior
+      spawn: false
+    - id: 474230316 #interior_depleted
+      spawn: false
+    - id: 58
+    - id: 1962517199 #interior
+      spawn: false
+    - id: 1917744937 #interior_depleted
+      spawn: false
+    - id: 1020001
+      spawn: false
+    - id: 1565420196 #interior
+      spawn: false
+    - id: 152428426 #interior_depleted
+      spawn: false
+    - id: 60
+      spawn: false
+  T2:
+    - id: 2020001 #large
+    - id: 2020002
+      spawn: false
+    - id: 699727318 #interior
+      spawn: false
+    - id: 1842369948 #interior_depleted
+      spawn: false
+    - id: 1045808810 #interior
+      spawn: false
+    - id: 1828992183 #interior_depleted
+      spawn: false
+    - id: 61
+    - id: 1619369727 #interior
+      spawn: false
+    - id: 134935169 #interior_depleted
+      spawn: false
+  T3:
+    - id: 198759779 #interior
+      spawn: false
+    - id: 1064484466 #interior_depleted
+      spawn: false
+    - id: 62
+    - id: 2072988001 #interior
+      spawn: false
+    - id: 2068688558 #interior_depleted
+      spawn: false
+    - id: 3020002 #large
+    - id: 3020001
+      spawn: false
+    - id: 379219978 #interior
+      spawn: false
+    - id: 986344159 #interior_depleted
+      spawn: false
+  T4:
+    - id: 782933576 #interior
+      spawn: false
+    - id: 1709170104 #interior_depleted
+      spawn: false
+    - id: 63
+    - id: 1077990023 #interior
+      spawn: false
+    - id: 806722041 #interior_depleted
+      spawn: false
+    - id: 2066552867 #interior
+      spawn: false
+    - id: 205387239 #interior_depleted
+      spawn: false
+  T5:
+    - id: 642972236 #interior
+      spawn: false
+    - id: 49710228 #interior_depleted
+      spawn: false
+    - id: 64
+    - id: 887736443 #interior
+      spawn: false
+    - id: 1365934955 #interior_depleted
+      spawn: false
+    - id: 549538391 #interior
+      spawn: false
+    - id: 1126774401 #interior_depleted
+      spawn: false
+  T6:
+    - id: 773149133 #interior
+      spawn: false
+    - id: 750444302 #interior_depleted
+      spawn: false
+    - id: 916586661 #interior
+      spawn: false
+    - id: 1318826480 #interior_depleted
+      spawn: false
+    - id: 65
+    - id: 2027405944 #interior
+      spawn: false
+    - id: 246146358 #interior_depleted
+      spawn: false
+  T7:
+    - id: 2073862342 #interior
+      spawn: false
+    - id: 1689263994 #interior_depleted
+      spawn: false
+    - id: 139483458
+    - id: 2031243337 #interior
+      spawn: false
+    - id: 411376268 #interior_depleted
+      spawn: false
+    - id: 1800013378 #interior
+      spawn: false
+    - id: 1171246287 #interior_depleted
+      spawn: false
+  T8:
+    - id: 20857160 #interior
+      spawn: false
+    - id: 2140754992 #interior_depleted
+      spawn: false
+    - id: 1332797261
+    - id: 1162923141 #interior
+      spawn: false
+    - id: 71559749 #interior_depleted
+      spawn: false
+    - id: 2025189123 #interior
+      spawn: false
+    - id: 650019671 #interior_depleted
+      spawn: false
+  T9:
+    - id: 1384946093 #interior
+      spawn: false
+    - id: 749656892 #interior_depleted
+      spawn: false
+    - id: 814703516 #interior
+      spawn: false
+    - id: 1241355606 #interior_depleted
+      spawn: false
+    - id: 1386735112
+    - id: 64125498 #interior
+      spawn: false
+    - id: 20400246 #interior_depleted
+      spawn: false
+  T10:
+    - id: 370078223 #interior
+      spawn: false
+    - id: 1526350171 #interior_depleted
+      spawn: false
+    - id: 1606770008
+    - id: 1747556974 #interior
+      spawn: false
+    - id: 1357154092 #interior_depleted
+      spawn: false
+    - id: 1452484871 #interior
+      spawn: false
+    - id: 1444297495 #interior_depleted
+      spawn: false
+
+Research:
+  T1:
+    - id: 140
+  T2:
+    - id: 141
+  T3:
+    - id: 142
+  T4:
+    - id: 143
+  T5:
+    - id: 144
+  T6:
+    - id: 145
+  T7:
+    - id: 2124845482
+  T8:
+    - id: 1567694896
+  T9:
+    - id: 331687458
+  T10:
+    - id: 93152192
+
+Rock:
+  T1:
+    - id: 40
+      spawn: false
+    - id: 41
+      spawn: false
+    - id: 42
+    - id: 43
+    - id: 44
+    - id: 45
+  T2:
+    - id: 46
+      spawn: false
+    - id: 47
+    - id: 48
+      spawn: false
+    - id: 49
+      spawn: false
+    - id: 2050001
+      spawn: false
+  T3:
+    - id: 50
+      spawn: false
+    - id: 51
+  T4:
+    - id: 52
+      spawn: false
+    - id: 53
+      spawn: false
+    - id: 2050000
+    - id: 4050000
+    - id: 4050001
+    - id: 4050002
+    - id: 4050003
+    - id: 4050004
+    - id: 4050005
+      spawn: false
+    - id: 4050006
+    - id: 4050007
+  T5:
+    - id: 55
+      spawn: false
+    - id: 54
+    - id: 5050002 #interior
+      spawn: false
+    - id: 5050001 #interior
+      spawn: false
+    - id: 5050000 #interior
+      spawn: false
+  T6:
+    - id: 57
+      spawn: false
+    - id: 56
+  T7:
+    - id: 1440062914
+      spawn: false
+    - id: 2104975743
+  T8:
+    - id: 479638263
+      spawn: false
+    - id: 1423928615
+  T9:
+    - id: 1902966974
+      spawn: false
+    - id: 1113640469
+  T10:
+    - id: 70663203
+      spawn: false
+    - id: 1996631377
+
+Sailing:
+  T1:
+    - id: 1477126404
+  T2:
+    - id: 1043012047
+  T4: []
+  T5:
+    - id: 1293969473
+  T6: []
+  T7: []
+  T8: []
+  T9: []
+  T10: []
+
+Sand:
+  T1:
+    - id: 204021372
+  T2:
+    - id: 464034838
+  T3:
+    - id: 1180909566
+  T4:
+    - id: 541862086
+  T5:
+    - id: 1691492474
+  T6:
+    - id: 999376882
+  T7:
+    - id: 1332535555
+  T8:
+    - id: 457752715
+  T9:
+    - id: 562432497
+  T10:
+    - id: 1333270269
+
+Tree:
+  T1:
+    ## --Sapling--
+    - id: 6
+    - id: 7
+    - id: 8
+    - id: 10
+    - id: 1010009 #planted
+    - id: 1010010 #planted
+    - id: 2010008 #planted
+    - id: 3010009 #planted
+    - id: 3010010 #planted
+    - id: 3010011 #planted
+    - id: 4010011 #planted
+    ## --Tree--
+    - id: 11
+    - id: 12
+    - id: 14
+    - id: 19
+    - id: 21
+    - id: 1011009 #planted
+    - id: 1011010 #planted
+    - id: 1012009 #fully
+    - id: 1012010 #fully
+  T2:
+    ## --Sapling--
+    - id: 9
+    - id: 1010008 #planted
+    ## --Tree--
+    - id: 13
+    - id: 18
+    - id: 20
+    - id: 29 #stump
+      spawn: false
+    - id: 1011008 #planted
+    - id: 1012008 #fully
+    - id: 2011008 #planted
+    - id: 2012008 #fully
+  T3:
+    - id: 15
+    - id: 27
+    - id: 28
+    - id: 1000028 #stump
+    - id: 1000029
+    - id: 3011010 #planted
+    - id: 3011011 #planted
+    - id: 3012010
+      spawn: false
+    - id: 3012011
+      spawn: false
+    - id: 1908426535
+  T4:
+    - id: 16
+    - id: 26
+    - id: 32
+    - id: 1566846336
+    - id: 3011009 #planted
+    - id: 3012009 #fully
+  T5:
+    ## --Sapling--
+    - id: 5
+    - id: 3010008 #planted
+      spawn: false
+    ## --Tree--
+    - id: 30
+    - id: 31
+    - id: 33
+    - id: 34
+    - id: 4011011 #planted
+    - id: 4012011 #fully
+  T6:
+    - id: 17
+    - id: 23
+    - id: 24 #gnarled
+      spawn: false
+    - id: 25
+    - id: 3011008 #planted
+    - id: 3012008 #fully
+  T7:
+    - id: 35
+    - id: 36
+    - id: 387666932
+      spawn: false
+  T8:
+    - id: 1101060328
+  T9:
+    - id: 939701809
+    - id: 1574437474
+    - id: 1821415333
+  T10:
+    - id: 939382648
+    - id: 1159270109
+      spawn: false
