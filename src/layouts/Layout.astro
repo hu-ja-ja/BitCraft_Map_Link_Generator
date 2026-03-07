@@ -1,10 +1,17 @@
+---
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/600.css";
+
+const basePath = import.meta.env.BASE_URL;
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" type="image/svg+xml" href={`${basePath}favicon.svg`} />
+		<link rel="icon" href={`${basePath}favicon.ico`} />
 		<meta name="generator" content={Astro.generator} />
 		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; frame-src https://map.bitjita.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;" />
 		<title>BitCraft Map Link Generator</title>
@@ -22,6 +29,6 @@
 		min-height: 100%;
 		background: #0d1117;
 		color: #c9d1d9;
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+		font-family: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
 	}
 </style>
