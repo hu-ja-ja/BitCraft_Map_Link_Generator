@@ -685,7 +685,6 @@ Tree:
     - id: 3012009 #fully
   T5:
     ## --Sapling--
-    - id: 5
     - id: 3010008 #planted
       spawn: false
     ## --Tree--
@@ -696,6 +695,7 @@ Tree:
     - id: 4011011 #planted
     - id: 4012011 #fully
   T6:
+    - id: 5
     - id: 17
     - id: 23
     - id: 24 #gnarled
