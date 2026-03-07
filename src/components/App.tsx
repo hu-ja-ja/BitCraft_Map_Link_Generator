@@ -1,4 +1,4 @@
-import { createSignal, createMemo, For, Show } from "solid-js";
+import { createSignal, createMemo, createEffect, onCleanup, For, Show } from "solid-js";
 import {
   TIERS,
   BASE_URL,
@@ -12,7 +12,12 @@ type QueryParam = "resourceId" | "enemyId";
 
 const EMBED_MAP_HASH =
   '#{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"popupText":[""],"iconName":"Hex_Logo","turnLayerOff":["ruinedLayer","treesLayer","templesLayer"]},"geometry":{"type":"Point","coordinates":[-5000,-5000]}}]}';
-
+const UPPER_NAMES = new Set([
+  "Flower", "Mushroom", "Berry", "Fiber_Plant", "Ore_Vein",
+  "Tree", "Rock", "Research", "Sand", "Clay", "Animal",
+]);
+const LOWER_NAMES = new Set(["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"]);
+const IFRAME_DEBOUNCE_MS = 400;
 type Selection =
   | { type: "tiered"; resourceName: string; tier: string; ids: number[]; param: QueryParam }
   | { type: "unique"; categoryName: string; itemName: string; ids: number[]; param: QueryParam };
@@ -26,27 +31,11 @@ export default function App(props: AppProps) {
   const [selection, setSelection] = createSignal<Selection[]>([]);
 
   const upperResources = createMemo(() =>
-    props.tieredResources.filter((resource) =>
-      [
-        "Flower",
-        "Mushroom",
-        "Berry",
-        "Fiber_Plant",
-        "Ore_Vein",
-        "Tree",
-        "Rock",
-        "Research",
-        "Sand",
-        "Clay",
-        "Animal",
-      ].includes(resource.name),
-    ),
+    props.tieredResources.filter((r) => UPPER_NAMES.has(r.name)),
   );
 
   const lowerResources = createMemo(() =>
-    props.tieredResources.filter((resource) =>
-      ["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"].includes(resource.name),
-    ),
+    props.tieredResources.filter((r) => LOWER_NAMES.has(r.name)),
   );
 
   const url = createMemo(() => {
@@ -57,16 +46,9 @@ export default function App(props: AppProps) {
     const enemyIds = new Set<number>();
 
     for (const item of selectedItems) {
-      if (item.type === "tiered") {
-        const target = item.param === "resourceId" ? resourceIds : enemyIds;
-        for (const id of item.ids) {
-          target.add(id);
-        }
-      } else {
-        const target = item.param === "resourceId" ? resourceIds : enemyIds;
-        for (const id of item.ids) {
-          target.add(id);
-        }
+      const target = item.param === "resourceId" ? resourceIds : enemyIds;
+      for (const id of item.ids) {
+        if (Number.isInteger(id)) target.add(id);
       }
     }
 
@@ -78,6 +60,7 @@ export default function App(props: AppProps) {
       params.push(`enemyId=${Array.from(enemyIds).join(",")}`);
     }
 
+    if (params.length === 0) return "";
     return `${BASE_URL}?${params.join("&")}`;
   });
 
@@ -137,16 +120,24 @@ export default function App(props: AppProps) {
     });
   }
 
+  const selectionKeys = createMemo(() => {
+    const keys = new Set<string>();
+    for (const item of selection()) {
+      if (item.type === "tiered") {
+        keys.add(`t:${item.resourceName}:${item.tier}`);
+      } else {
+        keys.add(`u:${item.categoryName}:${item.itemName}`);
+      }
+    }
+    return keys;
+  });
+
   function isTieredSelected(name: string, tier: string): boolean {
-    return selection().some(
-      (item) => item.type === "tiered" && item.resourceName === name && item.tier === tier,
-    );
+    return selectionKeys().has(`t:${name}:${tier}`);
   }
 
   function isUniqueSelected(categoryName: string, itemName: string): boolean {
-    return selection().some(
-      (item) => item.type === "unique" && item.categoryName === categoryName && item.itemName === itemName,
-    );
+    return selectionKeys().has(`u:${categoryName}:${itemName}`);
   }
 
   function clearSelection() {
@@ -201,22 +192,22 @@ export default function App(props: AppProps) {
   async function copyUrl() {
     const u = url();
     if (!u) return;
-    try {
-      await navigator.clipboard.writeText(u);
-    } catch {
-      const input = document.querySelector<HTMLInputElement>(".url-input");
-      if (input) {
-        input.select();
-        document.execCommand("copy");
-      }
-    }
+    await navigator.clipboard.writeText(u);
   }
 
   const hasT1Selected = createMemo(() =>
     selection().some((item) => item.type === "tiered" && item.tier === "T1"),
   );
 
-  const iframeUrl = createMemo(() => `${url() || BASE_URL}${EMBED_MAP_HASH}`);
+  const [debouncedIframeUrl, setDebouncedIframeUrl] = createSignal(
+    `${BASE_URL}${EMBED_MAP_HASH}`,
+  );
+
+  createEffect(() => {
+    const target = `${url() || BASE_URL}${EMBED_MAP_HASH}`;
+    const timer = setTimeout(() => setDebouncedIframeUrl(target), IFRAME_DEBOUNCE_MS);
+    onCleanup(() => clearTimeout(timer));
+  });
 
   return (
     <div class="app">
@@ -304,8 +295,9 @@ export default function App(props: AppProps) {
       <div class="panel-right">
         <iframe
           class="map-iframe"
-          src={iframeUrl()}
+          src={debouncedIframeUrl()}
           title="BitCraft Map"
+          sandbox="allow-scripts allow-same-origin"
           referrerpolicy="no-referrer"
         />
       </div>

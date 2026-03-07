@@ -90,7 +90,7 @@ function getEnabledItems(items: unknown): RawItem[] {
     return [];
   }
 
-  return items.filter(isRawItem).filter((item) => item.spawn !== false);
+  return items.filter(isRawItem).filter((item) => item.spawn !== false && Number.isInteger(item.id));
 }
 
 function getTierMap(sectionName: string): RawTierMap {
