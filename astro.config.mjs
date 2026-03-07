@@ -6,6 +6,6 @@ import solidJs from '@astrojs/solid-js';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://hu-ja-ja.github.io',
-  base: '/BitCraft_Map_Link_Generator/',
+  base: '/BitCraft_Map_Link_Generator',
   integrations: [solidJs()]
 });
