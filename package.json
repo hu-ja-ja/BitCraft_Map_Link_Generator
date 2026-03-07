@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "BitCraft_Map_Link_Generator",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.17.1"
+    "@astrojs/solid-js": "^5.1.3",
+    "astro": "^5.17.1",
+    "solid-js": "^1.9.11"
   }
 }

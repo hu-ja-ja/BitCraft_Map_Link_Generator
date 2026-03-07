@@ -89,7 +89,7 @@ Unique:
     - id: 158059491
       spawn: false #多分
 
-Baitfish:
+Bait_Fish:
   T1:
     - id: 1110000
   T2:
@@ -166,7 +166,7 @@ Clay:
   T10:
     - id: 1023127595
 
-FiberPlant:
+Fiber_Plant:
   T1:
     - id: 2
   T2:
@@ -260,7 +260,7 @@ Flower:
     - id: 1986100626
       spawn: false
 
-LakeFish:
+Lake_Fish:
   T1:
     - id: 1110001
   T2:
@@ -312,7 +312,7 @@ Mushroom:
       spawn: false
     - id: 2089197796
 
-OceanFish:
+Ocean_Fish:
   T1:
     - id: 1110002
     - id: 1110003 #chummed
@@ -344,7 +344,7 @@ OceanFish:
     - id: 424796674
     - id: 1006230316 #chummed
 
-OreVein:
+Ore_Vein:
   T1:
     - id: 59 #outcrop
     - id: 218270468 #interior
@@ -497,7 +497,7 @@ OreVein:
     - id: 1444297495 #interior_depleted
       spawn: false
 
-Research:
+Research: #Gryph
   T1:
     - id: 140
   T2:
