@@ -103,10 +103,14 @@ h2 {
   border-radius: 0;
   cursor: pointer;
   font-size: 12px;
+  font-family: inherit;
   font-weight: 600;
+  line-height: 1.2;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  appearance: none;
+  -moz-appearance: none;
 }
 
 .url-copy:hover:not(:disabled),
@@ -250,8 +254,12 @@ h2 {
   border-radius: 0;
   cursor: pointer;
   font-size: 11px;
+  font-family: inherit;
   font-weight: 500;
+  line-height: 1.2;
   transition: background 0.1s, border-color 0.1s;
+  appearance: none;
+  -moz-appearance: none;
 }
 
 .item-btn:hover {
