@@ -1,4 +1,5 @@
 import { parse } from "yaml";
+import type { UniqueItemTranslationKey } from "../i18n/translations";
 import resourceYaml from "../resource/resource.yaml?raw";
 
 export const BASE_URL = "https://map.bitjita.com/";
@@ -18,6 +19,7 @@ export type TieredResource = {
 export type UniqueItem = {
   ids: number[];
   name: string;
+  translationKey: UniqueItemTranslationKey;
 };
 
 export type UniqueCategory = {
@@ -118,27 +120,70 @@ function buildTieredResource(name: string): TieredResource {
   };
 }
 
+const UNIQUE_ITEM_TRANSLATION_KEYS: Record<string, UniqueItemTranslationKey> = {
+  Sticks: "Sticks",
+  "Flint Pile": "Flint_Pile",
+  "Wild Grains": "Wild_Grains",
+  "Wild Starbulb Plant": "Wild_Starbulb_Plant",
+  "Salt Deposit": "Salt_Deposit",
+  Ancient: "Ancient",
+  Den: "Den",
+  Jakyl: "Jakyl",
+  "Alpha Jakyl": "Alpha_Jakyl",
+  "King Jakyl": "King_Jakyl",
+  Skitch: "Skitch",
+  "Desert Crab": "Desert_Crab",
+  "Frost Crab": "Frost_Crab",
+  Terratoad: "Terratoad",
+  "Swamp Terratoad": "Swamp_Terratoad",
+  Umbura: "Umbura",
+  "Alpha Umbura": "Alpha_Umbura",
+  "King Umbura": "King_Umbura",
+  Drone: "Drone",
+  Soldier: "Soldier",
+  Queen: "Queen",
+};
+
+function toUniqueItemTranslationKey(name: string): UniqueItemTranslationKey {
+  const key = UNIQUE_ITEM_TRANSLATION_KEYS[name];
+  if (!key) {
+    throw new Error(`Missing unique item translation key for: ${name}`);
+  }
+  return key;
+}
+
+function buildUniqueItem(item: RawItem): UniqueItem {
+  const name = item.name ?? String(item.id);
+  return {
+    ids: [item.id],
+    name,
+    translationKey: toUniqueItemTranslationKey(name),
+  };
+}
+
+function buildSyntheticUniqueItem(name: string, ids: number[]): UniqueItem {
+  return {
+    ids,
+    name,
+    translationKey: toUniqueItemTranslationKey(name),
+  };
+}
+
 function buildUniqueCategory(name: string): UniqueCategory {
   const uniqueGroups = resourceDocument.Unique ?? {};
   const items =
     name === "Monster"
-      ? getEnabledItems(resourceDocument.Monster).map((item) => ({
-          ids: [item.id],
-          name: item.name ?? String(item.id),
-        }))
+      ? getEnabledItems(resourceDocument.Monster).map(buildUniqueItem)
       : [
-          ...getEnabledItems(uniqueGroups.Resource).map((item) => ({
-            ids: [item.id],
-            name: item.name ?? String(item.id),
-          })),
-          {
-            ids: getEnabledItems(uniqueGroups.Ancient).map((item) => item.id),
-            name: "Ancient",
-          },
-          {
-            ids: getEnabledItems(uniqueGroups.Den).map((item) => item.id),
-            name: "Den",
-          },
+          ...getEnabledItems(uniqueGroups.Resource).map(buildUniqueItem),
+          buildSyntheticUniqueItem(
+            "Ancient",
+            getEnabledItems(uniqueGroups.Ancient).map((item) => item.id),
+          ),
+          buildSyntheticUniqueItem(
+            "Den",
+            getEnabledItems(uniqueGroups.Den).map((item) => item.id),
+          ),
         ].filter((item) => item.ids.length > 0);
 
   return {

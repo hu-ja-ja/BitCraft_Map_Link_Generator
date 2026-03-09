@@ -5,5 +5,5 @@ import { resourceAppData } from '../data/resources';
 ---
 
 <Layout>
-	<App client:load {...resourceAppData} />
+	<App client:only="solid-js" {...resourceAppData} />
 </Layout>

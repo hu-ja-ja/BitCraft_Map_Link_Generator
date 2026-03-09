@@ -6,6 +6,8 @@ import {
   type UniqueCategory,
   type UniqueItem,
 } from "../data/resources";
+import { I18nProvider, useI18n, SUPPORTED_LOCALES, type Locale } from "../i18n/context";
+import type { ResourceTranslationKey, UniqueItemTranslationKey } from "../i18n/translations";
 import "./App.css";
 
 type QueryParam = "resourceId" | "enemyId";
@@ -27,7 +29,28 @@ type AppProps = {
   uniqueCategories: UniqueCategory[];
 };
 
-export default function App(props: AppProps) {
+function AppInner(props: AppProps) {
+  const { t, locale, setLocale } = useI18n();
+
+  const resName = (name: string) => {
+    return t().resourceNames[name as ResourceTranslationKey] ?? name;
+  };
+
+  const uniqueItemName = (item: UniqueItem) => {
+    return t().uniqueItemNames[item.translationKey as UniqueItemTranslationKey] ?? item.name;
+  };
+
+  const renderLodWarning = () => {
+    const [beforeLabel, afterLabel = ""] = t().app.lodWarning.split("{label}");
+    return (
+      <>
+        {beforeLabel}
+        <strong>{t().app.lodLabel}</strong>
+        {afterLabel}
+      </>
+    );
+  };
+
   const [selection, setSelection] = createSignal<Selection[]>([]);
 
   const upperResources = createMemo(() =>
@@ -150,7 +173,7 @@ export default function App(props: AppProps) {
         <table class="resource-table">
           <thead>
             <tr>
-              <th class="name-col" scope="col">Type</th>
+              <th class="name-col" scope="col">{t().labels.typeHeader}</th>
               <For each={TIERS}>{(tier) => <th>{tier}</th>}</For>
             </tr>
           </thead>
@@ -158,7 +181,7 @@ export default function App(props: AppProps) {
             <For each={resources}>
               {(resource) => (
                 <tr>
-                  <td class="name-col">{resource.displayName}</td>
+                  <td class="name-col">{resName(resource.name)}</td>
                   <For each={TIERS}>
                     {(tier) => {
                       const ids = resource.tiers[tier] ?? [];
@@ -212,12 +235,21 @@ export default function App(props: AppProps) {
   return (
     <div class="app">
       <div class="panel-left">
-        <h1 class="title">BitCraft Map Link Generator</h1>
+        <div class="title-bar">
+          <h1 class="title">{t().app.title}</h1>
+          <select
+            class="lang-select"
+            value={locale()}
+            onChange={(e) => setLocale(e.currentTarget.value as Locale)}
+          >
+            <For each={[...SUPPORTED_LOCALES]}>
+              {(l) => <option value={l}>{l.toUpperCase()}</option>}
+            </For>
+          </select>
+        </div>
 
         <Show when={hasT1Selected()}>
-          <div class="lod-warning">
-            ⚠ T1 resources selected — enable <strong>LoD</strong> in the Map settings to help reduce PC load.
-          </div>
+          <div class="lod-warning">{renderLodWarning()}</div>
         </Show>
 
         <div class="url-bar">
@@ -226,48 +258,48 @@ export default function App(props: AppProps) {
             type="text"
             readonly
             value={url()}
-            placeholder="Select one or more entries to generate URL"
+            placeholder={t().app.urlPlaceholder}
           />
           <button class="url-copy" onClick={copyUrl} disabled={!url()}>
-            Copy
+            {t().actions.copy}
           </button>
           <Show when={url()}>
             <a class="url-open" href={url()} target="_blank" rel="noopener noreferrer">
-              Open
+              {t().actions.open}
             </a>
           </Show>
         </div>
 
         <div class="toolbar-meta">
-          <p class="selection-note">Selected: {selection().length}</p>
+          <p class="selection-note">{t().labels.selected}: {selection().length}</p>
           <button class="url-clear" onClick={clearSelection} disabled={selection().length === 0}>
-            Clear Selection
+            {t().actions.clearSelection}
           </button>
         </div>
 
         <section>
-          <h2>Resources</h2>
+          <h2>{t().sections.resources}</h2>
           <div class="resource-groups">
             <div class="resource-group">
-              <h3>Land</h3>
+              <h3>{t().sections.land}</h3>
               {renderResourceTable(upperResources())}
             </div>
             <div class="resource-group">
-              <h3>Ocean and Liver</h3>
+              <h3>{t().sections.oceanAndRiver}</h3>
               {renderResourceTable(lowerResources())}
             </div>
           </div>
         </section>
 
         <section>
-          <h2>Unique & Monsters</h2>
+          <h2>{t().sections.uniqueAndMonsters}</h2>
           <div class="table-scroll">
             <table class="unique-table">
               <tbody>
                 <For each={props.uniqueCategories}>
                   {(cat) => (
                     <tr>
-                      <td class="name-col">{cat.displayName}</td>
+                      <td class="name-col">{resName(cat.name)}</td>
                       <td class="items-col">
                         <For each={cat.items}>
                           {(item) => (
@@ -278,7 +310,7 @@ export default function App(props: AppProps) {
                               }}
                               onClick={() => selectUnique(cat, item)}
                             >
-                              {item.name}
+                              {uniqueItemName(item)}
                             </button>
                           )}
                         </For>
@@ -296,11 +328,19 @@ export default function App(props: AppProps) {
         <iframe
           class="map-iframe"
           src={debouncedIframeUrl()}
-          title="BitCraft Map"
+          title={t().app.mapTitle}
           sandbox="allow-scripts allow-same-origin"
           referrerpolicy="no-referrer"
         />
       </div>
     </div>
+  );
+}
+
+export default function App(props: AppProps) {
+  return (
+    <I18nProvider>
+      <AppInner {...props} />
+    </I18nProvider>
   );
 }

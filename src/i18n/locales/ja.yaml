@@ -1,0 +1,67 @@
+app:
+  title: "BitCraft マップリンク生成"
+  lodWarning: "⚠ T1 リソースが選択されています — PC負荷軽減のためマップ設定で {label} を有効にしてください。"
+  lodLabel: "LoD"
+  urlPlaceholder: "エントリを選択してURLを生成"
+  mapTitle: "BitCraft マップ"
+
+actions:
+  copy: "コピー"
+  open: "開く"
+  clearSelection: "選択解除"
+
+labels:
+  selected: "選択中"
+  typeHeader: "種類"
+
+console:
+  applied: "言語設定を適用しました: {language} ({code})"
+  source: "適用元: {source}"
+
+sections:
+  resources: "リソース"
+  land: "陸上"
+  oceanAndRiver: "海と川"
+  uniqueAndMonsters: "ユニーク & モンスター"
+
+resourceNames:
+  Flower: "花"
+  Mushroom: "キノコ"
+  Berry: "ベリー"
+  Fiber_Plant: "繊維植物"
+  Ore_Vein: "鉱脈"
+  Tree: "木"
+  Rock: "岩"
+  Research: "研究"
+  Sand: "砂"
+  Clay: "粘土"
+  Sailing: "航海"
+  Bait_Fish: "ベイトフィッシュ"
+  Lake_Fish: "湖の魚群"
+  Ocean_Fish: "海魚"
+  Animal: "動物"
+  Resource: "リソース"
+  Monster: "モンスター"
+
+uniqueItemNames:
+  Sticks: "木の枝"
+  Flint_Pile: "火打ち石の山"
+  Wild_Grains: "野生の穀物"
+  Wild_Starbulb_Plant: "野生のスターバルブ植物"
+  Salt_Deposit: "塩鉱床"
+  Ancient: "古代の"
+  Den: "巣"
+  Jakyl: "ジャキル"
+  Alpha_Jakyl: "アルファ・ジャキル"
+  King_Jakyl: "キング・ジャキル"
+  Skitch: "スキッチ"
+  Desert_Crab: "砂漠ガニ"
+  Frost_Crab: "フロストクラブ"
+  Terratoad: "テラトード"
+  Swamp_Terratoad: "沼地のテラトード"
+  Umbura: "アンブラ"
+  Alpha_Umbura: "アルファ・アンブラ"
+  King_Umbura: "キング・アンブラ"
+  Drone: "ドローン"
+  Soldier: "ソルジャー"
+  Queen: "クイーン"

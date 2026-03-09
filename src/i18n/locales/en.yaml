@@ -1,0 +1,67 @@
+app:
+  title: "BitCraft Map Link Generator"
+  lodWarning: "⚠ T1 resources selected — enable {label} in the Map settings to help reduce PC load."
+  lodLabel: "LoD"
+  urlPlaceholder: "Select one or more entries to generate URL"
+  mapTitle: "BitCraft Map"
+
+actions:
+  copy: "Copy"
+  open: "Open"
+  clearSelection: "Clear Selection"
+
+labels:
+  selected: "Selected"
+  typeHeader: "Type"
+
+console:
+  applied: "Language applied: {language} ({code})"
+  source: "Source: {source}"
+
+sections:
+  resources: "Resources"
+  land: "Land"
+  oceanAndRiver: "Ocean and River"
+  uniqueAndMonsters: "Unique & Monsters"
+
+resourceNames:
+  Flower: "Flower"
+  Mushroom: "Mushroom"
+  Berry: "Berry"
+  Fiber_Plant: "Fiber Plant"
+  Ore_Vein: "Ore Vein"
+  Tree: "Tree"
+  Rock: "Rock"
+  Research: "Glyph"
+  Sand: "Sand"
+  Clay: "Clay"
+  Sailing: "Sailing"
+  Bait_Fish: "Bait Fish"
+  Lake_Fish: "Lake Fish"
+  Ocean_Fish: "Ocean Fish"
+  Animal: "Animal"
+  Resource: "Resource"
+  Monster: "Monster"
+
+uniqueItemNames:
+  Sticks: "Sticks"
+  Flint_Pile: "Flint Pile"
+  Wild_Grains: "Wild Grains"
+  Wild_Starbulb_Plant: "Wild Starbulb Plant"
+  Salt_Deposit: "Salt Deposit"
+  Ancient: "Ancient"
+  Den: "Den"
+  Jakyl: "Jakyl"
+  Alpha_Jakyl: "Alpha Jakyl"
+  King_Jakyl: "King Jakyl"
+  Skitch: "Skitch"
+  Desert_Crab: "Desert Crab"
+  Frost_Crab: "Frost Crab"
+  Terratoad: "Terratoad"
+  Swamp_Terratoad: "Swamp Terratoad"
+  Umbura: "Umbura"
+  Alpha_Umbura: "Alpha Umbura"
+  King_Umbura: "King Umbura"
+  Drone: "Drone"
+  Soldier: "Soldier"
+  Queen: "Queen"
