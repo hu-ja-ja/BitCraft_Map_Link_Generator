@@ -1,3 +1,4 @@
+import { Github } from "lucide-solid";
 import { createSignal, createMemo, createEffect, onCleanup, For, Show } from "solid-js";
 import {
   TIERS,
@@ -20,6 +21,7 @@ const UPPER_NAMES = new Set([
 ]);
 const LOWER_NAMES = new Set(["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"]);
 const IFRAME_DEBOUNCE_MS = 400;
+
 type Selection =
   | { type: "tiered"; resourceName: string; tier: string; ids: number[]; param: QueryParam }
   | { type: "unique"; categoryName: string; itemName: string; ids: number[]; param: QueryParam };
@@ -235,93 +237,107 @@ function AppInner(props: AppProps) {
   return (
     <div class="app">
       <div class="panel-left">
-        <div class="title-bar">
-          <h1 class="title">{t().app.title}</h1>
-          <select
-            class="lang-select"
-            value={locale()}
-            onChange={(e) => setLocale(e.currentTarget.value as Locale)}
-          >
-            <For each={[...SUPPORTED_LOCALES]}>
-              {(l) => <option value={l}>{l.toUpperCase()}</option>}
-            </For>
-          </select>
-        </div>
+        <div class="panel-left-content">
+          <div class="title-bar">
+            <h1 class="title">{t().app.title}</h1>
+            <select
+              class="lang-select"
+              value={locale()}
+              onChange={(e) => setLocale(e.currentTarget.value as Locale)}
+            >
+              <For each={[...SUPPORTED_LOCALES]}>
+                {(l) => <option value={l}>{l.toUpperCase()}</option>}
+              </For>
+            </select>
+          </div>
 
-        <Show when={hasT1Selected()}>
-          <div class="lod-warning">{renderLodWarning()}</div>
-        </Show>
-
-        <div class="url-bar">
-          <input
-            class="url-input"
-            type="text"
-            readonly
-            value={url()}
-            placeholder={t().app.urlPlaceholder}
-          />
-          <button class="url-copy" onClick={copyUrl} disabled={!url()}>
-            {t().actions.copy}
-          </button>
-          <Show when={url()}>
-            <a class="url-open" href={url()} target="_blank" rel="noopener noreferrer">
-              {t().actions.open}
-            </a>
+          <Show when={hasT1Selected()}>
+            <div class="lod-warning">{renderLodWarning()}</div>
           </Show>
+
+          <div class="url-bar">
+            <input
+              class="url-input"
+              type="text"
+              readonly
+              value={url()}
+              placeholder={t().app.urlPlaceholder}
+            />
+            <button class="url-copy" onClick={copyUrl} disabled={!url()}>
+              {t().actions.copy}
+            </button>
+            <Show when={url()}>
+              <a class="url-open" href={url()} target="_blank" rel="noopener noreferrer">
+                {t().actions.open}
+              </a>
+            </Show>
+          </div>
+
+          <div class="toolbar-meta">
+            <p class="selection-note">{t().labels.selected}: {selection().length}</p>
+            <button class="url-clear" onClick={clearSelection} disabled={selection().length === 0}>
+              {t().actions.clearSelection}
+            </button>
+          </div>
+
+          <section>
+            <h2>{t().sections.resources}</h2>
+            <div class="resource-groups">
+              <div class="resource-group">
+                <h3>{t().sections.land}</h3>
+                {renderResourceTable(upperResources())}
+              </div>
+              <div class="resource-group">
+                <h3>{t().sections.oceanAndRiver}</h3>
+                {renderResourceTable(lowerResources())}
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2>{t().sections.uniqueAndMonsters}</h2>
+            <div class="table-scroll">
+              <table class="unique-table">
+                <tbody>
+                  <For each={props.uniqueCategories}>
+                    {(cat) => (
+                      <tr>
+                        <td class="name-col">{resName(cat.name)}</td>
+                        <td class="items-col">
+                          <For each={cat.items}>
+                            {(item) => (
+                              <button
+                                classList={{
+                                  "item-btn": true,
+                                  selected: isUniqueSelected(cat.name, item.name),
+                                }}
+                                onClick={() => selectUnique(cat, item)}
+                              >
+                                {uniqueItemName(item)}
+                              </button>
+                            )}
+                          </For>
+                        </td>
+                      </tr>
+                    )}
+                  </For>
+                </tbody>
+              </table>
+            </div>
+          </section>
         </div>
 
-        <div class="toolbar-meta">
-          <p class="selection-note">{t().labels.selected}: {selection().length}</p>
-          <button class="url-clear" onClick={clearSelection} disabled={selection().length === 0}>
-            {t().actions.clearSelection}
-          </button>
+        <div class="panel-footer">
+          <a
+            class="repo-link"
+            href="https://github.com/hu-ja-ja/BitCraft_Map_Link_Generator"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Github class="repo-link-icon" size={16} aria-hidden="true" />
+            <span>GitHub</span>
+          </a>
         </div>
-
-        <section>
-          <h2>{t().sections.resources}</h2>
-          <div class="resource-groups">
-            <div class="resource-group">
-              <h3>{t().sections.land}</h3>
-              {renderResourceTable(upperResources())}
-            </div>
-            <div class="resource-group">
-              <h3>{t().sections.oceanAndRiver}</h3>
-              {renderResourceTable(lowerResources())}
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2>{t().sections.uniqueAndMonsters}</h2>
-          <div class="table-scroll">
-            <table class="unique-table">
-              <tbody>
-                <For each={props.uniqueCategories}>
-                  {(cat) => (
-                    <tr>
-                      <td class="name-col">{resName(cat.name)}</td>
-                      <td class="items-col">
-                        <For each={cat.items}>
-                          {(item) => (
-                            <button
-                              classList={{
-                                "item-btn": true,
-                                selected: isUniqueSelected(cat.name, item.name),
-                              }}
-                              onClick={() => selectUnique(cat, item)}
-                            >
-                              {uniqueItemName(item)}
-                            </button>
-                          )}
-                        </For>
-                      </td>
-                    </tr>
-                  )}
-                </For>
-              </tbody>
-            </table>
-          </div>
-        </section>
       </div>
 
       <div class="panel-right">
