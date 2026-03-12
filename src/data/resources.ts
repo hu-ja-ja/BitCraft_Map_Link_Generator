@@ -1,6 +1,6 @@
 import { parse } from "yaml";
 import type { UniqueItemTranslationKey } from "../i18n/translations";
-import resourceYaml from "../resource/resource.yaml?raw";
+import resourceYaml from "../resource/resource.generated.yaml?raw";
 
 export const BASE_URL = "https://map.bitjita.com/";
 

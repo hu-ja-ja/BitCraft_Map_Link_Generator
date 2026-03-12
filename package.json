@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "fetch:resources": "node scripts/fetch-resources.mjs"
   },
   "dependencies": {
     "@astrojs/solid-js": "^6.0.0",
