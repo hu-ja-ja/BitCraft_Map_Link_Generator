@@ -10,11 +10,13 @@
     "fetch:resources": "node scripts/fetch-resources.mjs"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.7",
     "@astrojs/solid-js": "^6.0.0",
     "@fontsource/ibm-plex-sans": "^5.2.8",
     "astro": "^6.0.0",
     "lucide-solid": "^0.577.0",
     "solid-js": "^1.9.11",
+    "typescript": "^5.9.3",
     "yaml": "^2.8.2"
   }
 }
