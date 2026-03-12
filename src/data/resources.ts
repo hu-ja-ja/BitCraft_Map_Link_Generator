@@ -6,7 +6,7 @@ export const BASE_URL = "https://map.bitjita.com/";
 
 export const TIERS = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10"] as const;
 
-type QueryParam = "resourceId" | "enemyId";
+export type QueryParam = "resourceId" | "enemyId";
 type TierKey = (typeof TIERS)[number];
 
 export type TieredResource = {
