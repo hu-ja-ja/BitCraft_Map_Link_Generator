@@ -23,6 +23,7 @@ playerSearch:
 labels:
   selected: "選択中"
   typeHeader: "種類"
+  includePlayerId: "playerId をURLに含める"
 
 console:
   applied: "言語設定を適用しました: {language} ({code})"

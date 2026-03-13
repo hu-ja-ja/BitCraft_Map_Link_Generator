@@ -23,6 +23,7 @@ playerSearch:
 labels:
   selected: "Selected"
   typeHeader: "Type"
+  includePlayerId: "Include playerId in URL"
 
 console:
   applied: "Language applied: {language} ({code})"

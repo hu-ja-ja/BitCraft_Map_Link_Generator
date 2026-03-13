@@ -59,6 +59,7 @@ const TRANSLATION_SCHEMA = {
   labels: {
     selected: "",
     typeHeader: "",
+    includePlayerId: "",
   },
   console: {
     applied: "",

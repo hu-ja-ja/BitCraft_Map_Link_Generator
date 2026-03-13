@@ -70,10 +70,12 @@ export default function PlayerSearch() {
     const player = selectedPlayer();
     if (!player) {
       localStorage.removeItem(PLAYER_STORAGE_KEY);
+      window.dispatchEvent(new CustomEvent("player-settings-changed"));
       return;
     }
 
     localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
+    window.dispatchEvent(new CustomEvent("player-settings-changed"));
   });
 
   onCleanup(() => {

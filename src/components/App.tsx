@@ -1,6 +1,7 @@
+import { Checkbox } from "@kobalte/core/checkbox";
 import { Dialog } from "@kobalte/core/dialog";
 import { Github, UserCog } from "lucide-solid";
-import { createMemo, For, Show } from "solid-js";
+import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { type TieredResource, type UniqueCategory, type UniqueItem } from "../data/resources";
 import { I18nProvider, useI18n, SUPPORTED_LOCALES, type Locale } from "../i18n/context";
 import type { ResourceTranslationKey, UniqueItemTranslationKey } from "../i18n/translations";
@@ -15,6 +16,7 @@ const UPPER_NAMES = new Set([
   "Tree", "Rock", "Research", "Sand", "Clay", "Animal",
 ]);
 const LOWER_NAMES = new Set(["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"]);
+const PLAYER_STORAGE_KEY = "bitcraft.selectedPlayer";
 
 type AppProps = {
   tieredResources: TieredResource[];
@@ -23,6 +25,8 @@ type AppProps = {
 
 function AppInner(props: AppProps) {
   const { t, locale, setLocale } = useI18n();
+  const [includePlayerId, setIncludePlayerId] = createSignal(false);
+  const [savedEntityId, setSavedEntityId] = createSignal("");
 
   const resName = (name: string) =>
     t().resourceNames[name as ResourceTranslationKey] ?? name;
@@ -32,7 +36,10 @@ function AppInner(props: AppProps) {
 
   const { selection, toggleTiered, toggleUnique, isTieredSelected, isUniqueSelected, clear } =
     useSelection();
-  const { url, iframeUrl, hasT1Selected } = useMapUrl(selection);
+  const { url, iframeUrl, hasT1Selected } = useMapUrl(selection, {
+    includePlayerId,
+    playerId: savedEntityId,
+  });
 
   const upperResources = createMemo(() =>
     props.tieredResources.filter((r) => UPPER_NAMES.has(r.name)),
@@ -58,6 +65,36 @@ function AppInner(props: AppProps) {
     if (!u) return;
     await navigator.clipboard.writeText(u);
   }
+
+  function loadSavedPlayerId() {
+    if (typeof window === "undefined") return;
+
+    const raw = localStorage.getItem(PLAYER_STORAGE_KEY);
+    if (!raw) {
+      setSavedEntityId("");
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(raw) as { entityId?: unknown };
+      setSavedEntityId(typeof parsed.entityId === "string" ? parsed.entityId : "");
+    } catch {
+      setSavedEntityId("");
+    }
+  }
+
+  onMount(() => {
+    loadSavedPlayerId();
+
+    const onPlayerSettingsChanged = () => loadSavedPlayerId();
+    window.addEventListener("player-settings-changed", onPlayerSettingsChanged);
+    window.addEventListener("storage", onPlayerSettingsChanged);
+
+    onCleanup(() => {
+      window.removeEventListener("player-settings-changed", onPlayerSettingsChanged);
+      window.removeEventListener("storage", onPlayerSettingsChanged);
+    });
+  });
 
   return (
     <div class="app">
@@ -99,6 +136,20 @@ function AppInner(props: AppProps) {
                 </div>
               </Dialog.Portal>
             </Dialog>
+
+            <Checkbox
+              class="player-id-checkbox"
+              checked={includePlayerId()}
+              onChange={setIncludePlayerId}
+            >
+              <Checkbox.Input class="player-id-checkbox-input" />
+              <Checkbox.Control class="player-id-checkbox-control">
+                <Checkbox.Indicator class="player-id-checkbox-indicator">✓</Checkbox.Indicator>
+              </Checkbox.Control>
+              <Checkbox.Label class="player-id-checkbox-label">
+                {t().labels.includePlayerId}
+              </Checkbox.Label>
+            </Checkbox>
           </div>
 
           <Show when={hasT1Selected()}>

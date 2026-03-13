@@ -6,7 +6,12 @@ const EMBED_MAP_HASH =
   '#{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"popupText":[""],"iconName":"Hex_Logo","turnLayerOff":["ruinedLayer","treesLayer","templesLayer"]},"geometry":{"type":"Point","coordinates":[-5000,-5000]}}]}';
 const IFRAME_DEBOUNCE_MS = 400;
 
-export function useMapUrl(selection: () => Selection[]) {
+type MapUrlOptions = {
+  includePlayerId?: () => boolean;
+  playerId?: () => string;
+};
+
+export function useMapUrl(selection: () => Selection[], options?: MapUrlOptions) {
   const url = createMemo(() => {
     const selectedItems = selection();
     if (selectedItems.length === 0) return "";
@@ -27,6 +32,12 @@ export function useMapUrl(selection: () => Selection[]) {
     }
     if (enemyIds.size > 0) {
       params.push(`enemyId=${Array.from(enemyIds).join(",")}`);
+    }
+    if (options?.includePlayerId?.()) {
+      const playerId = options.playerId?.().trim() ?? "";
+      if (playerId.length > 0) {
+        params.push(`playerId=${encodeURIComponent(playerId)}`);
+      }
     }
 
     if (params.length === 0) return "";
