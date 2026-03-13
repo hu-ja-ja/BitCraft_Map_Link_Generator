@@ -197,19 +197,21 @@ export default function PlayerSearch() {
           />
         </Search.Control>
 
-        <Search.Portal>
-          <Search.Content
-            class="player-search-content"
-            onCloseAutoFocus={(event) => event.preventDefault()}
-          >
-            <Search.Listbox class="player-search-listbox" />
-            <Show when={!isLoading() && trimmedInput().length >= MIN_QUERY_LENGTH}>
-              <Search.NoResult class="player-search-noresult">
-                {t().playerSearch.noResult}
-              </Search.NoResult>
-            </Show>
-          </Search.Content>
-        </Search.Portal>
+        <Show when={trimmedInput().length >= MIN_QUERY_LENGTH}>
+          <Search.Portal>
+            <Search.Content
+              class="player-search-content"
+              onCloseAutoFocus={(event) => event.preventDefault()}
+            >
+              <Search.Listbox class="player-search-listbox" />
+              <Show when={!isLoading()}>
+                <Search.NoResult class="player-search-noresult">
+                  {t().playerSearch.noResult}
+                </Search.NoResult>
+              </Show>
+            </Search.Content>
+          </Search.Portal>
+        </Show>
       </Search>
 
       <p class="player-search-help">
