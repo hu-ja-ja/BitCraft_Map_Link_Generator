@@ -9,6 +9,16 @@ actions:
   copy: "Copy"
   open: "Open"
   clearSelection: "Clear Selection"
+  close: "Close"
+
+playerSearch:
+  label: "User search"
+  placeholder: "Type username to search"
+  minChars: "Type at least {count} characters"
+  noResult: "No players found"
+  idLabel: "entityId"
+  idPlaceholder: "Select a player to set ID"
+  autoSaved: "The selected ID is automatically saved"
 
 labels:
   selected: "Selected"
@@ -23,6 +33,7 @@ sections:
   land: "Land"
   oceanAndRiver: "Ocean and River"
   uniqueAndMonsters: "Unique & Monsters"
+  playerIdSettings: "ID Settings"
 
 resourceNames:
   Flower: "Flower"

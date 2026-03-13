@@ -1,8 +1,10 @@
-import { Github } from "lucide-solid";
+import { Dialog } from "@kobalte/core/dialog";
+import { Github, UserCog } from "lucide-solid";
 import { createMemo, For, Show } from "solid-js";
 import { type TieredResource, type UniqueCategory, type UniqueItem } from "../data/resources";
 import { I18nProvider, useI18n, SUPPORTED_LOCALES, type Locale } from "../i18n/context";
 import type { ResourceTranslationKey, UniqueItemTranslationKey } from "../i18n/translations";
+import PlayerSearch from "./PlayerSearch";
 import { useSelection } from "./hooks/useSelection";
 import { useMapUrl } from "./hooks/useMapUrl";
 import ResourceTable from "./ResourceTable";
@@ -72,6 +74,31 @@ function AppInner(props: AppProps) {
                 {(l) => <option value={l}>{l.toUpperCase()}</option>}
               </For>
             </select>
+          </div>
+
+          <div class="id-settings-nav-wrap">
+            <Dialog>
+              <Dialog.Trigger class="id-settings-nav" aria-label={t().sections.playerIdSettings}>
+                <UserCog size={14} aria-hidden="true" />
+                {t().sections.playerIdSettings}
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Overlay class="settings-dialog-overlay" />
+                <div class="settings-dialog-layer">
+                  <Dialog.Content class="settings-dialog-content">
+                    <div class="settings-dialog-header">
+                      <Dialog.Title class="settings-dialog-title">
+                        {t().sections.playerIdSettings}
+                      </Dialog.Title>
+                      <Dialog.CloseButton class="settings-dialog-close">
+                        {t().actions.close}
+                      </Dialog.CloseButton>
+                    </div>
+                    <PlayerSearch />
+                  </Dialog.Content>
+                </div>
+              </Dialog.Portal>
+            </Dialog>
           </div>
 
           <Show when={hasT1Selected()}>

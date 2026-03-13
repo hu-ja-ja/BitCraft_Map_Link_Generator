@@ -9,6 +9,16 @@ actions:
   copy: "コピー"
   open: "開く"
   clearSelection: "選択解除"
+  close: "閉じる"
+
+playerSearch:
+  label: "ユーザー検索"
+  placeholder: "username を入力して検索"
+  minChars: "{count}文字以上で検索します"
+  noResult: "プレイヤーが見つかりません"
+  idLabel: "entityId"
+  idPlaceholder: "プレイヤーを選択するとIDが入ります"
+  autoSaved: "選択したIDは自動保存されます"
 
 labels:
   selected: "選択中"
@@ -23,6 +33,7 @@ sections:
   land: "陸上"
   oceanAndRiver: "海と川"
   uniqueAndMonsters: "ユニーク & モンスター"
+  playerIdSettings: "ID設定"
 
 resourceNames:
   Flower: "花"

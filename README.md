@@ -1,43 +1,40 @@
-# Astro Starter Kit: Basics
+# BitCraft Map Link Generator
 
-```sh
-pnpm create astro@latest -- --template basics
-```
+BitCraft のリソース ID / エネミー ID を選択し、マップURLを生成する Astro + SolidJS アプリです。
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 開発コマンド
 
-## 🚀 Project Structure
+| Command | Action |
+| :-- | :-- |
+| `pnpm install` | 依存関係をインストール |
+| `pnpm dev` | 開発サーバー起動 (`http://localhost:4321`) |
+| `pnpm build` | 本番ビルド |
+| `pnpm preview` | ビルド成果物のローカル確認 |
+| `pnpm fetch:resources` | リソース定義の更新スクリプト実行 |
 
-Inside of your Astro project, you'll see the following folders and files:
+## 配信構成
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── components
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+- フロントエンド: GitHub Pages (`https://hu-ja-ja.github.io/BitCraft_Map_Link_Generator`)
+- プレイヤー検索 API: Vercel (`https://bitcraft-map-link-generator.vercel.app/api/players`)
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+`astro.config.mjs` はビルド環境で自動分岐します。
 
-## 🧞 Commands
+- `VERCEL=1` のとき: Vercel 向け `output: server` で API エンドポイントを提供
+- それ以外: GitHub Pages 向け `output: static` + `base: /BitCraft_Map_Link_Generator`
 
-All commands are run from the root of the project, from a terminal:
+### 環境変数
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+- `PLAYER_API_APP_IDENTIFIER` (Server only, optional)
+	- 上流 API (`https://bitjita.com/api/players`) へ送る `x-app-identifier` ヘッダー値
+	- 未設定時は既定値: `Map_Link_Generator (discord: hu_ja_ja_)`
 
-## 👀 Want to learn more?
+- `PUBLIC_PLAYER_SEARCH_ENDPOINT` (Client, optional)
+	- フロントエンド側の検索先を上書きしたいときのみ設定
+	- 通常は未設定で `https://bitcraft-map-link-generator.vercel.app/api/players` を使う
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## ディレクトリ概要
+
+- `src/components`: SolidJS UI
+- `src/pages/api/players.ts`: Vercel Functions で動作するプレイヤー検索プロキシ
+- `src/data`: リソース定義の読み込み
+- `scripts/fetch-resources.mjs`: データ更新用スクリプト

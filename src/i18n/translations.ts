@@ -45,6 +45,16 @@ const TRANSLATION_SCHEMA = {
     copy: "",
     open: "",
     clearSelection: "",
+    close: "",
+  },
+  playerSearch: {
+    label: "",
+    placeholder: "",
+    minChars: "",
+    noResult: "",
+    idLabel: "",
+    idPlaceholder: "",
+    autoSaved: "",
   },
   labels: {
     selected: "",
@@ -59,6 +69,7 @@ const TRANSLATION_SCHEMA = {
     land: "",
     oceanAndRiver: "",
     uniqueAndMonsters: "",
+    playerIdSettings: "",
   },
   resourceNames: {
     Flower: "",
