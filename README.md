@@ -23,8 +23,7 @@ Astro 側は GitHub Pages 用の static 出力のみです。Vercel では Astro
 ### Vercel 設定
 
 - Root Directory: `api`
-- API Function: `api/players.ts` (Vercel 上の実体パスは `/players`)
-- `api/vercel.json` の rewrite により、公開 URL は `/api/players` を維持
+- API Function: `api/api/players.ts` (公開 URL: `/api/players`)
 
 ### 環境変数
 
@@ -39,8 +38,6 @@ Astro 側は GitHub Pages 用の static 出力のみです。Vercel では Astro
 ## ディレクトリ概要
 
 - `src/components`: SolidJS UI
-- `api/players.ts`: Vercel Functions で動作するプレイヤー検索プロキシ
-- `api/vercel.json`: `/api/players` を `/players` へ rewrite する設定
+- `api/api/players.ts`: Vercel Functions で動作するプレイヤー検索プロキシ
 - `src/data`: リソース定義の読み込み
 - `scripts/fetch-resources.mjs`: データ更新用スクリプト
-
