@@ -1,6 +1,6 @@
 import { Checkbox } from "@kobalte/core/checkbox";
 import { Dialog } from "@kobalte/core/dialog";
-import { Github, UserCog } from "lucide-solid";
+import { Check, Github, UserCog } from "lucide-solid";
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { type TieredResource, type UniqueCategory, type UniqueItem } from "../data/resources";
 import { I18nProvider, useI18n, SUPPORTED_LOCALES, type Locale } from "../i18n/context";
@@ -189,7 +189,9 @@ function AppInner(props: AppProps) {
             >
               <Checkbox.Input class="player-id-checkbox-input" />
               <Checkbox.Control class="player-id-checkbox-control">
-                <Checkbox.Indicator class="player-id-checkbox-indicator">✓</Checkbox.Indicator>
+                <Checkbox.Indicator class="player-id-checkbox-indicator">
+                  <Check size={14} aria-hidden="true" />
+                </Checkbox.Indicator>
               </Checkbox.Control>
               <Checkbox.Label class="player-id-checkbox-label">
                 {t().labels.includePlayerId}

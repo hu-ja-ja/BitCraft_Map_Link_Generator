@@ -1,6 +1,6 @@
 import { Checkbox } from "@kobalte/core/checkbox";
 import { Search } from "@kobalte/core/search";
-import { Search as SearchIcon } from "lucide-solid";
+import { Check, Search as SearchIcon } from "lucide-solid";
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { useI18n } from "../i18n/context";
 
@@ -289,7 +289,9 @@ export default function PlayerSearch() {
                 >
                   <Checkbox.Input class="selected-player-toggle-input" />
                   <Checkbox.Control class="selected-player-toggle-control">
-                    <Checkbox.Indicator class="selected-player-toggle-indicator">✓</Checkbox.Indicator>
+                    <Checkbox.Indicator class="selected-player-toggle-indicator">
+                      <Check size={14} aria-hidden="true" />
+                    </Checkbox.Indicator>
                   </Checkbox.Control>
                 </Checkbox>
                 <div class="selected-player-main">
