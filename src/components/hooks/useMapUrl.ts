@@ -8,7 +8,7 @@ const IFRAME_DEBOUNCE_MS = 400;
 
 type MapUrlOptions = {
   includePlayerId?: () => boolean;
-  playerId?: () => string;
+  playerIds?: () => string[];
 };
 
 export function useMapUrl(selection: () => Selection[], options?: MapUrlOptions) {
@@ -34,9 +34,12 @@ export function useMapUrl(selection: () => Selection[], options?: MapUrlOptions)
       params.push(`enemyId=${Array.from(enemyIds).join(",")}`);
     }
     if (options?.includePlayerId?.()) {
-      const playerId = options.playerId?.().trim() ?? "";
-      if (playerId.length > 0) {
-        params.push(`playerId=${encodeURIComponent(playerId)}`);
+      const playerIds = options.playerIds?.() ?? [];
+      const normalizedPlayerIds = playerIds
+        .map((rawId) => rawId.trim())
+        .filter((playerId) => playerId.length > 0);
+      if (normalizedPlayerIds.length > 0) {
+        params.push(`playerId=${normalizedPlayerIds.map(encodeURIComponent).join(",")}`);
       }
     }
 

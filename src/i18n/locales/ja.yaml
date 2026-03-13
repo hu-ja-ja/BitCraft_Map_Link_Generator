@@ -16,8 +16,10 @@ playerSearch:
   placeholder: "username を入力して検索"
   minChars: "{count}文字以上で検索します"
   noResult: "プレイヤーが見つかりません"
-  idLabel: "entityId"
-  idPlaceholder: "プレイヤーを選択するとIDが入ります"
+  selectedCount: "登録済み playerId: {count}"
+  includeInUrl: "URLに含める"
+  removePlayer: "{name} を削除"
+  limitReached: "登録上限（{count}件）に達しています"
   autoSaved: "選択したIDは自動保存されます"
 
 labels:

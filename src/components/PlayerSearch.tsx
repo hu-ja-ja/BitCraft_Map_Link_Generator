@@ -1,6 +1,7 @@
+import { Checkbox } from "@kobalte/core/checkbox";
 import { Search } from "@kobalte/core/search";
 import { Search as SearchIcon } from "lucide-solid";
-import { createEffect, createMemo, createSignal, onCleanup, onMount, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { useI18n } from "../i18n/context";
 
 type PlayerRecord = {
@@ -16,9 +17,11 @@ type PlayerApiResponse = {
 type PersistedPlayer = {
   entityId: string;
   username: string;
+  enabled: boolean;
 };
 
 const PLAYER_STORAGE_KEY = "bitcraft.selectedPlayer";
+const MAX_SELECTED_PLAYERS = 100;
 const MIN_QUERY_LENGTH = 2;
 const RATE_LIMIT_REQUESTS = 250;
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -30,7 +33,7 @@ export default function PlayerSearch() {
   const { t } = useI18n();
 
   const [options, setOptions] = createSignal<PlayerRecord[]>([]);
-  const [selectedPlayer, setSelectedPlayer] = createSignal<PersistedPlayer | null>(null);
+  const [selectedPlayers, setSelectedPlayers] = createSignal<PersistedPlayer[]>([]);
   const [isLoading, setIsLoading] = createSignal(false);
   const [isComposing, setIsComposing] = createSignal(false);
   const [lastInputValue, setLastInputValue] = createSignal("");
@@ -52,9 +55,39 @@ export default function PlayerSearch() {
     }
 
     try {
-      const parsed = JSON.parse(raw) as PersistedPlayer;
-      if (typeof parsed.entityId === "string" && typeof parsed.username === "string") {
-        setSelectedPlayer({ entityId: parsed.entityId, username: parsed.username });
+      const parsed = JSON.parse(raw) as unknown;
+
+      if (Array.isArray(parsed)) {
+        const players = parsed
+          .map((item) => {
+            const player = item as PersistedPlayer;
+            if (typeof player.entityId !== "string" || typeof player.username !== "string") {
+              return null;
+            }
+            const entityId = player.entityId.trim();
+            const username = player.username.trim();
+            if (!entityId || !username) return null;
+            return {
+              entityId,
+              username,
+              enabled: player.enabled !== false,
+            };
+          })
+          .filter((player): player is PersistedPlayer => player !== null);
+
+        const deduped = Array.from(
+          new Map(players.map((player) => [player.entityId, player])).values(),
+        ).slice(0, MAX_SELECTED_PLAYERS);
+        setSelectedPlayers(deduped);
+      } else {
+        const player = parsed as PersistedPlayer;
+        if (typeof player.entityId === "string" && typeof player.username === "string") {
+          const entityId = player.entityId.trim();
+          const username = player.username.trim();
+          if (entityId && username) {
+            setSelectedPlayers([{ entityId, username, enabled: true }]);
+          }
+        }
       }
     } catch {
       localStorage.removeItem(PLAYER_STORAGE_KEY);
@@ -67,14 +100,14 @@ export default function PlayerSearch() {
     if (typeof window === "undefined") return;
     if (!isStorageReady()) return;
 
-    const player = selectedPlayer();
-    if (!player) {
+    const players = selectedPlayers();
+    if (players.length === 0) {
       localStorage.removeItem(PLAYER_STORAGE_KEY);
       window.dispatchEvent(new CustomEvent("player-settings-changed"));
       return;
     }
 
-    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
+    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(players));
     window.dispatchEvent(new CustomEvent("player-settings-changed"));
   });
 
@@ -151,7 +184,29 @@ export default function PlayerSearch() {
     const player = value as PlayerRecord;
     if (typeof player.entityId !== "string" || typeof player.username !== "string") return;
 
-    setSelectedPlayer({ entityId: player.entityId, username: player.username });
+    const entityId = player.entityId.trim();
+    const username = player.username.trim();
+    if (!entityId || !username) return;
+
+    setSelectedPlayers((current) => {
+      if (current.some((item) => item.entityId === entityId)) {
+        return current;
+      }
+      if (current.length >= MAX_SELECTED_PLAYERS) {
+        return current;
+      }
+      return [...current, { entityId, username, enabled: true }];
+    });
+  }
+
+  function removePlayer(entityId: string) {
+    setSelectedPlayers((current) => current.filter((player) => player.entityId !== entityId));
+  }
+
+  function togglePlayerEnabled(entityId: string, enabled: boolean) {
+    setSelectedPlayers((current) =>
+      current.map((player) => (player.entityId === entityId ? { ...player, enabled } : player)),
+    );
   }
 
   function handleCompositionEnd(value: string) {
@@ -218,27 +273,49 @@ export default function PlayerSearch() {
         {t().playerSearch.minChars.replace("{count}", String(MIN_QUERY_LENGTH))}
       </p>
 
-      <Show when={selectedPlayer()}>
-        {(player) => (
-          <div class="selected-player-card" role="status" aria-live="polite">
-            <div class="selected-player-name">{player().username}</div>
-            <div class="selected-player-id">{player().entityId}</div>
-          </div>
-        )}
+      <Show when={selectedPlayers().length > 0}>
+        <p class="selected-player-count">
+          {t().playerSearch.selectedCount.replace("{count}", String(selectedPlayers().length))}
+        </p>
+        <div class="selected-player-list" role="status" aria-live="polite">
+          <For each={selectedPlayers()}>
+            {(player) => (
+              <div class="selected-player-card">
+                <Checkbox
+                  class="selected-player-toggle"
+                  checked={player.enabled}
+                  onChange={(checked) => togglePlayerEnabled(player.entityId, checked)}
+                  aria-label={t().playerSearch.includeInUrl}
+                >
+                  <Checkbox.Input class="selected-player-toggle-input" />
+                  <Checkbox.Control class="selected-player-toggle-control">
+                    <Checkbox.Indicator class="selected-player-toggle-indicator">✓</Checkbox.Indicator>
+                  </Checkbox.Control>
+                </Checkbox>
+                <div class="selected-player-main">
+                  <div class="selected-player-name">{player.username}</div>
+                  <div class="selected-player-id">{player.entityId}</div>
+                </div>
+                <button
+                  type="button"
+                  class="selected-player-remove"
+                  aria-label={t().playerSearch.removePlayer.replace("{name}", player.username)}
+                  onClick={() => removePlayer(player.entityId)}
+                >
+                  ×
+                </button>
+              </div>
+            )}
+          </For>
+        </div>
       </Show>
 
-      <div class="player-id-field">
-        <label class="player-id-label" for="selected-entity-id">{t().playerSearch.idLabel}</label>
-        <input
-          id="selected-entity-id"
-          class="player-id-input"
-          type="text"
-          value={selectedPlayer()?.entityId ?? ""}
-          readonly
-          placeholder={t().playerSearch.idPlaceholder}
-        />
-        <p class="player-id-note">{t().playerSearch.autoSaved}</p>
-      </div>
+      <p class="player-id-note">{t().playerSearch.autoSaved}</p>
+      <Show when={selectedPlayers().length >= MAX_SELECTED_PLAYERS}>
+        <p class="player-search-limit">
+          {t().playerSearch.limitReached.replace("{count}", String(MAX_SELECTED_PLAYERS))}
+        </p>
+      </Show>
     </div>
   );
 }

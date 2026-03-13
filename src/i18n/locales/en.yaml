@@ -16,8 +16,10 @@ playerSearch:
   placeholder: "Type username to search"
   minChars: "Type at least {count} characters"
   noResult: "No players found"
-  idLabel: "entityId"
-  idPlaceholder: "Select a player to set ID"
+  selectedCount: "Registered playerId: {count}"
+  includeInUrl: "Include in URL"
+  removePlayer: "Remove {name}"
+  limitReached: "Registration limit reached ({count})"
   autoSaved: "The selected ID is automatically saved"
 
 labels:

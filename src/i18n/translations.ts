@@ -52,8 +52,10 @@ const TRANSLATION_SCHEMA = {
     placeholder: "",
     minChars: "",
     noResult: "",
-    idLabel: "",
-    idPlaceholder: "",
+    selectedCount: "",
+    includeInUrl: "",
+    removePlayer: "",
+    limitReached: "",
     autoSaved: "",
   },
   labels: {

@@ -17,6 +17,12 @@ const UPPER_NAMES = new Set([
 ]);
 const LOWER_NAMES = new Set(["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"]);
 const PLAYER_STORAGE_KEY = "bitcraft.selectedPlayer";
+const MAX_SELECTED_PLAYERS = 100;
+
+type PersistedPlayer = {
+  entityId: string;
+  enabled?: boolean;
+};
 
 type AppProps = {
   tieredResources: TieredResource[];
@@ -26,7 +32,7 @@ type AppProps = {
 function AppInner(props: AppProps) {
   const { t, locale, setLocale } = useI18n();
   const [includePlayerId, setIncludePlayerId] = createSignal(false);
-  const [savedEntityId, setSavedEntityId] = createSignal("");
+  const [savedPlayerIds, setSavedPlayerIds] = createSignal<string[]>([]);
 
   const resName = (name: string) =>
     t().resourceNames[name as ResourceTranslationKey] ?? name;
@@ -38,7 +44,7 @@ function AppInner(props: AppProps) {
     useSelection();
   const { url, iframeUrl, hasT1Selected } = useMapUrl(selection, {
     includePlayerId,
-    playerId: savedEntityId,
+    playerIds: savedPlayerIds,
   });
 
   const upperResources = createMemo(() =>
@@ -66,27 +72,45 @@ function AppInner(props: AppProps) {
     await navigator.clipboard.writeText(u);
   }
 
-  function loadSavedPlayerId() {
+  function loadSavedPlayerIds() {
     if (typeof window === "undefined") return;
 
     const raw = localStorage.getItem(PLAYER_STORAGE_KEY);
     if (!raw) {
-      setSavedEntityId("");
+      setSavedPlayerIds([]);
       return;
     }
 
     try {
-      const parsed = JSON.parse(raw) as { entityId?: unknown };
-      setSavedEntityId(typeof parsed.entityId === "string" ? parsed.entityId : "");
+      const parsed = JSON.parse(raw) as unknown;
+
+      if (Array.isArray(parsed)) {
+        const ids = parsed
+          .map((item) => {
+            const player = item as PersistedPlayer;
+            if (player.enabled === false) return "";
+            return typeof player.entityId === "string" ? player.entityId.trim() : "";
+          })
+          .filter((id): id is string => id.length > 0);
+
+        setSavedPlayerIds(Array.from(new Set(ids)).slice(0, MAX_SELECTED_PLAYERS));
+        return;
+      }
+
+      const legacyEntityId =
+        typeof (parsed as { entityId?: unknown }).entityId === "string"
+          ? (parsed as { entityId: string }).entityId.trim()
+          : "";
+      setSavedPlayerIds(legacyEntityId ? [legacyEntityId] : []);
     } catch {
-      setSavedEntityId("");
+      setSavedPlayerIds([]);
     }
   }
 
   onMount(() => {
-    loadSavedPlayerId();
+    loadSavedPlayerIds();
 
-    const onPlayerSettingsChanged = () => loadSavedPlayerId();
+    const onPlayerSettingsChanged = () => loadSavedPlayerIds();
     window.addEventListener("player-settings-changed", onPlayerSettingsChanged);
     window.addEventListener("storage", onPlayerSettingsChanged);
 
