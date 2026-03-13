@@ -1,7 +1,7 @@
 import { Checkbox } from "@kobalte/core/checkbox";
 import { Dialog } from "@kobalte/core/dialog";
 import { Github, UserCog } from "lucide-solid";
-import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { type TieredResource, type UniqueCategory, type UniqueItem } from "../data/resources";
 import { I18nProvider, useI18n, SUPPORTED_LOCALES, type Locale } from "../i18n/context";
 import type { ResourceTranslationKey, UniqueItemTranslationKey } from "../i18n/translations";
@@ -17,6 +17,7 @@ const UPPER_NAMES = new Set([
 ]);
 const LOWER_NAMES = new Set(["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"]);
 const PLAYER_STORAGE_KEY = "bitcraft.selectedPlayer";
+const INCLUDE_PLAYER_ID_STORAGE_KEY = "bitcraft.includePlayerId";
 const MAX_SELECTED_PLAYERS = 100;
 
 type PersistedPlayer = {
@@ -32,6 +33,7 @@ type AppProps = {
 function AppInner(props: AppProps) {
   const { t, locale, setLocale } = useI18n();
   const [includePlayerId, setIncludePlayerId] = createSignal(false);
+  const [isIncludePlayerIdStorageReady, setIsIncludePlayerIdStorageReady] = createSignal(false);
   const [savedPlayerIds, setSavedPlayerIds] = createSignal<string[]>([]);
 
   const resName = (name: string) =>
@@ -107,10 +109,29 @@ function AppInner(props: AppProps) {
     }
   }
 
+  function loadIncludePlayerIdSetting() {
+    if (typeof window === "undefined") return;
+
+    const raw = localStorage.getItem(INCLUDE_PLAYER_ID_STORAGE_KEY);
+    setIncludePlayerId(raw === "true");
+    setIsIncludePlayerIdStorageReady(true);
+  }
+
+  createEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isIncludePlayerIdStorageReady()) return;
+
+    localStorage.setItem(INCLUDE_PLAYER_ID_STORAGE_KEY, includePlayerId() ? "true" : "false");
+  });
+
   onMount(() => {
+    loadIncludePlayerIdSetting();
     loadSavedPlayerIds();
 
-    const onPlayerSettingsChanged = () => loadSavedPlayerIds();
+    const onPlayerSettingsChanged = () => {
+      loadSavedPlayerIds();
+      loadIncludePlayerIdSetting();
+    };
     window.addEventListener("player-settings-changed", onPlayerSettingsChanged);
     window.addEventListener("storage", onPlayerSettingsChanged);
 
