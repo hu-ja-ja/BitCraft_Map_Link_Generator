@@ -43,3 +43,4 @@ Astro 側は GitHub Pages 用の static 出力のみです。Vercel では Astro
 - `api/vercel.json`: `/api/players` を `/players` へ rewrite する設定
 - `src/data`: リソース定義の読み込み
 - `scripts/fetch-resources.mjs`: データ更新用スクリプト
+
