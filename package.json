@@ -4,7 +4,10 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "lint": "oxlint --config .oxlintrc.json --tsconfig tsconfig.json src api scripts",
+    "lint:fix": "oxlint --config .oxlintrc.json --tsconfig tsconfig.json --fix src api scripts",
+    "lint:ci": "oxlint --config .oxlintrc.json --tsconfig tsconfig.json --deny-warnings src api scripts",
+    "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "fetch:resources": "node scripts/fetch-resources.mjs"
@@ -21,6 +24,7 @@
     "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "@astrojs/vercel": "^10.0.0"
+    "@astrojs/vercel": "^10.0.0",
+    "oxlint": "^1.55.0"
   }
 }

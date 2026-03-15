@@ -75,8 +75,8 @@ function AppInner(props: AppProps) {
     const u = url();
     if (!u) return;
     await navigator.clipboard.writeText(u);
-    toaster.show((props) => (
-      <Toast toastId={props.toastId} duration={1200} class="toast">
+    toaster.show((toastProps) => (
+      <Toast toastId={toastProps.toastId} duration={1200} class="toast">
         <Toast.Title class="toast-title">{t().actions.copied}</Toast.Title>
       </Toast>
     ));
@@ -159,9 +159,9 @@ function AppInner(props: AppProps) {
               value={locale()}
               onChange={(v) => v && setLocale(v)}
               options={[...SUPPORTED_LOCALES]}
-              itemComponent={(props) => (
-                <Select.Item item={props.item} class="lang-select-item">
-                  <Select.ItemLabel>{props.item.rawValue.toUpperCase()}</Select.ItemLabel>
+              itemComponent={(itemProps) => (
+                <Select.Item item={itemProps.item} class="lang-select-item">
+                  <Select.ItemLabel>{itemProps.item.rawValue.toUpperCase()}</Select.ItemLabel>
                 </Select.Item>
               )}
             >

@@ -248,7 +248,7 @@ function toOutputItem(resource, templateItem, includeName) {
 function sortByTemplateThenId(resources, templateItems) {
   const templateOrder = new Map(templateItems.map((item, index) => [item.id, index]));
 
-  return [...resources].sort((left, right) => {
+  return [...resources].toSorted((left, right) => {
     const leftIndex = templateOrder.get(left.id);
     const rightIndex = templateOrder.get(right.id);
 
@@ -294,7 +294,7 @@ function mergeWithTemplateItems(resources, templateItems, templateLookup, includ
     mergedItems.push(toOutputItem(resource, templateItem, includeName));
   }
 
-  return mergedItems.sort((left, right) => left.id - right.id);
+  return mergedItems.toSorted((left, right) => left.id - right.id);
 }
 
 function buildOutputDocument(payload, templateIndex) {
@@ -361,7 +361,7 @@ async function readTemplateDocument() {
     };
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") {
-      throw new Error(`Missing merge template: ${generatedYamlPath}`);
+      throw new Error(`Missing merge template: ${generatedYamlPath}`, { cause: error });
     }
 
     throw error;

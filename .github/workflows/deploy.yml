@@ -1,9 +1,11 @@
 name: Deploy Astro to GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - CI Lint and Check
+    types:
+      - completed
   workflow_dispatch:
 
 env:
@@ -20,20 +22,42 @@ concurrency:
 
 jobs:
   build:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout your repository using git
+      - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Install, build, and upload your site
-        uses: withastro/action@v5
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          package-manager: pnpm@9
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
           node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build site
+        run: pnpm build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
   deploy:
     needs: build
+    if: needs.build.result == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

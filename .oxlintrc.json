@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "eslint",
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import",
+    "jsx-a11y",
+    "promise",
+    "node"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "no-debugger": "error",
+    "no-console": "off",
+    "eqeqeq": "error",
+    "import/no-unassigned-import": "off"
+  },
+  "env": {
+    "builtin": true,
+    "browser": true,
+    "es2024": true
+  },
+  "globals": {},
+  "ignorePatterns": [
+    "dist/**",
+    ".astro/**",
+    "node_modules/**"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "api/**/*.{ts,tsx,js,mjs,cjs}",
+        "scripts/**/*.{ts,tsx,js,mjs,cjs}"
+      ],
+      "env": {
+        "node": true,
+        "browser": false
+      }
+    }
+  ]
+}
