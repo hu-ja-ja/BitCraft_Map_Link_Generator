@@ -35,6 +35,7 @@ type AppProps = {
 
 function AppInner(props: AppProps) {
   const { t, locale, setLocale } = useI18n();
+  const [showMap, setShowMap] = createSignal(true);
   const [includePlayerId, setIncludePlayerId] = createSignal(false);
   const [isIncludePlayerIdStorageReady, setIsIncludePlayerIdStorageReady] = createSignal(false);
   const [savedPlayerIds, setSavedPlayerIds] = createSignal<string[]>([]);
@@ -133,6 +134,10 @@ function AppInner(props: AppProps) {
   });
 
   onMount(() => {
+    const mobileMedia = window.matchMedia("(max-width: 768px) and (hover: none) and (pointer: coarse)");
+    const syncMapVisibility = () => setShowMap(!mobileMedia.matches);
+    syncMapVisibility();
+
     loadIncludePlayerIdSetting();
     loadSavedPlayerIds();
 
@@ -142,10 +147,12 @@ function AppInner(props: AppProps) {
     };
     window.addEventListener("player-settings-changed", onPlayerSettingsChanged);
     window.addEventListener("storage", onPlayerSettingsChanged);
+    mobileMedia.addEventListener("change", syncMapVisibility);
 
     onCleanup(() => {
       window.removeEventListener("player-settings-changed", onPlayerSettingsChanged);
       window.removeEventListener("storage", onPlayerSettingsChanged);
+      mobileMedia.removeEventListener("change", syncMapVisibility);
     });
   });
 
@@ -315,14 +322,28 @@ function AppInner(props: AppProps) {
         </div>
       </div>
 
-      <div class="panel-right">
-        <iframe
-          class="map-iframe"
-          src={iframeUrl()}
-          title={t().app.mapTitle}
-          sandbox="allow-scripts allow-same-origin"
-          referrerpolicy="no-referrer"
-        />
+      <Show when={showMap()}>
+        <div class="panel-right">
+          <iframe
+            class="map-iframe"
+            src={iframeUrl()}
+            title={t().app.mapTitle}
+            sandbox="allow-scripts allow-same-origin"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+      </Show>
+
+      <div class="panel-footer panel-footer-below-map">
+        <a
+          class="repo-link"
+          href="https://github.com/hu-ja-ja/BitCraft_Map_Link_Generator"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Github class="repo-link-icon" size={16} aria-hidden="true" />
+          <span>GitHub</span>
+        </a>
       </div>
 
       <Toast.Region class="toast-region">
