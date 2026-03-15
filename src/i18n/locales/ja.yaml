@@ -7,6 +7,7 @@ app:
 
 actions:
   copy: "コピー"
+  copied: "コピーしました"
   open: "開く"
   clearSelection: "選択解除"
   close: "閉じる"

@@ -1,4 +1,5 @@
 import { For, Show } from "solid-js";
+import { ToggleButton } from "@kobalte/core/toggle-button";
 import { TIERS, type TieredResource } from "../data/resources";
 import { useI18n } from "../i18n/context";
 import type { ResourceTranslationKey } from "../i18n/translations";
@@ -39,12 +40,18 @@ export default function ResourceTable(props: ResourceTableProps) {
                           cell: true,
                           "has-data": has,
                           empty: !has,
-                          selected: props.isTieredSelected(resource.name, tier),
+                          selected: has && props.isTieredSelected(resource.name, tier),
                         }}
-                        onClick={() => has && props.onSelect(resource, tier)}
                       >
                         <Show when={has}>
-                          <span class="cell-marker" aria-hidden="true"></span>
+                          <ToggleButton
+                            class="cell-btn"
+                            pressed={props.isTieredSelected(resource.name, tier)}
+                            onChange={() => props.onSelect(resource, tier)}
+                            aria-label={`${resName(resource.name)} ${tier}`}
+                          >
+                            <span class="cell-marker" aria-hidden="true" />
+                          </ToggleButton>
                         </Show>
                       </td>
                     );

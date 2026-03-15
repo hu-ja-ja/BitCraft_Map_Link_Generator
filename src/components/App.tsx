@@ -1,5 +1,8 @@
 import { Checkbox } from "@kobalte/core/checkbox";
 import { Dialog } from "@kobalte/core/dialog";
+import { Select } from "@kobalte/core/select";
+import { Toast, toaster } from "@kobalte/core/toast";
+import { ToggleButton } from "@kobalte/core/toggle-button";
 import { Check, Github, UserCog } from "lucide-solid";
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { type TieredResource, type UniqueCategory, type UniqueItem } from "../data/resources";
@@ -72,6 +75,11 @@ function AppInner(props: AppProps) {
     const u = url();
     if (!u) return;
     await navigator.clipboard.writeText(u);
+    toaster.show((props) => (
+      <Toast toastId={props.toastId} duration={1200} class="toast">
+        <Toast.Title class="toast-title">{t().actions.copied}</Toast.Title>
+      </Toast>
+    ));
   }
 
   function loadSavedPlayerIds() {
@@ -147,15 +155,28 @@ function AppInner(props: AppProps) {
         <div class="panel-left-content">
           <div class="title-bar">
             <h1 class="title">{t().app.title}</h1>
-            <select
-              class="lang-select"
+            <Select<Locale>
               value={locale()}
-              onChange={(e) => setLocale(e.currentTarget.value as Locale)}
+              onChange={(v) => v && setLocale(v)}
+              options={[...SUPPORTED_LOCALES]}
+              itemComponent={(props) => (
+                <Select.Item item={props.item} class="lang-select-item">
+                  <Select.ItemLabel>{props.item.rawValue.toUpperCase()}</Select.ItemLabel>
+                </Select.Item>
+              )}
             >
-              <For each={[...SUPPORTED_LOCALES]}>
-                {(l) => <option value={l}>{l.toUpperCase()}</option>}
-              </For>
-            </select>
+              <Select.Trigger class="lang-select">
+                <Select.Value<Locale>>
+                  {(state) => state.selectedOption().toUpperCase()}
+                </Select.Value>
+                <Select.Icon class="lang-select-icon">▾</Select.Icon>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content class="lang-select-content">
+                  <Select.Listbox class="lang-select-listbox" />
+                </Select.Content>
+              </Select.Portal>
+            </Select>
           </div>
 
           <div class="id-settings-nav-wrap">
@@ -262,15 +283,13 @@ function AppInner(props: AppProps) {
                         <td class="items-col">
                           <For each={cat.items}>
                             {(item) => (
-                              <button
-                                classList={{
-                                  "item-btn": true,
-                                  selected: isUniqueSelected(cat.name, item.name),
-                                }}
-                                onClick={() => toggleUnique(cat, item)}
+                              <ToggleButton
+                                class="item-btn"
+                                pressed={isUniqueSelected(cat.name, item.name)}
+                                onChange={() => toggleUnique(cat, item)}
                               >
                                 {uniqueItemLabel(item)}
-                              </button>
+                              </ToggleButton>
                             )}
                           </For>
                         </td>
@@ -305,6 +324,10 @@ function AppInner(props: AppProps) {
           referrerpolicy="no-referrer"
         />
       </div>
+
+      <Toast.Region class="toast-region">
+        <Toast.List class="toast-list" />
+      </Toast.Region>
     </div>
   );
 }

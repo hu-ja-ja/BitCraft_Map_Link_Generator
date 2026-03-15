@@ -43,6 +43,7 @@ const TRANSLATION_SCHEMA = {
   },
   actions: {
     copy: "",
+    copied: "",
     open: "",
     clearSelection: "",
     close: "",
