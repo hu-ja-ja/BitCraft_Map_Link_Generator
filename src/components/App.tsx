@@ -21,6 +21,7 @@ const UPPER_NAMES = new Set([
 const LOWER_NAMES = new Set(["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"]);
 const PLAYER_STORAGE_KEY = "bitcraft.selectedPlayer";
 const INCLUDE_PLAYER_ID_STORAGE_KEY = "bitcraft.includePlayerId";
+const MAP_PANEL_OPEN_STORAGE_KEY = "bitcraft.mapPanelOpen";
 const MAX_SELECTED_PLAYERS = 100;
 
 type PersistedPlayer = {
@@ -38,6 +39,7 @@ function AppInner(props: AppProps) {
   const [showMap, setShowMap] = createSignal(true);
   const [includePlayerId, setIncludePlayerId] = createSignal(false);
   const [isIncludePlayerIdStorageReady, setIsIncludePlayerIdStorageReady] = createSignal(false);
+  const [isMapPanelStorageReady, setIsMapPanelStorageReady] = createSignal(false);
   const [savedPlayerIds, setSavedPlayerIds] = createSignal<string[]>([]);
 
   const resName = (name: string) =>
@@ -126,6 +128,19 @@ function AppInner(props: AppProps) {
     setIsIncludePlayerIdStorageReady(true);
   }
 
+  function syncMapVisibility(mobileMedia: MediaQueryList) {
+    if (typeof window === "undefined") return;
+
+    const raw = localStorage.getItem(MAP_PANEL_OPEN_STORAGE_KEY);
+    if (raw === "true" || raw === "false") {
+      setShowMap(raw === "true");
+    } else {
+      setShowMap(!mobileMedia.matches);
+    }
+
+    setIsMapPanelStorageReady(true);
+  }
+
   createEffect(() => {
     if (typeof window === "undefined") return;
     if (!isIncludePlayerIdStorageReady()) return;
@@ -133,10 +148,17 @@ function AppInner(props: AppProps) {
     localStorage.setItem(INCLUDE_PLAYER_ID_STORAGE_KEY, includePlayerId() ? "true" : "false");
   });
 
+  createEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isMapPanelStorageReady()) return;
+
+    localStorage.setItem(MAP_PANEL_OPEN_STORAGE_KEY, showMap() ? "true" : "false");
+  });
+
   onMount(() => {
     const mobileMedia = window.matchMedia("(max-width: 768px) and (hover: none) and (pointer: coarse)");
-    const syncMapVisibility = () => setShowMap(!mobileMedia.matches);
-    syncMapVisibility();
+    const onViewportChanged = () => syncMapVisibility(mobileMedia);
+    onViewportChanged();
 
     loadIncludePlayerIdSetting();
     loadSavedPlayerIds();
@@ -147,43 +169,53 @@ function AppInner(props: AppProps) {
     };
     window.addEventListener("player-settings-changed", onPlayerSettingsChanged);
     window.addEventListener("storage", onPlayerSettingsChanged);
-    mobileMedia.addEventListener("change", syncMapVisibility);
+    mobileMedia.addEventListener("change", onViewportChanged);
 
     onCleanup(() => {
       window.removeEventListener("player-settings-changed", onPlayerSettingsChanged);
       window.removeEventListener("storage", onPlayerSettingsChanged);
-      mobileMedia.removeEventListener("change", syncMapVisibility);
+      mobileMedia.removeEventListener("change", onViewportChanged);
     });
   });
 
   return (
-    <div class="app">
+    <div class="app" classList={{ "app-sidebar-expanded": !showMap() }}>
       <div class="panel-left">
         <div class="panel-left-content">
           <div class="title-bar">
             <h1 class="title">{t().app.title}</h1>
-            <Select<Locale>
-              value={locale()}
-              onChange={(v) => v && setLocale(v)}
-              options={[...SUPPORTED_LOCALES]}
-              itemComponent={(itemProps) => (
-                <Select.Item item={itemProps.item} class="lang-select-item">
-                  <Select.ItemLabel>{itemProps.item.rawValue.toUpperCase()}</Select.ItemLabel>
-                </Select.Item>
-              )}
-            >
-              <Select.Trigger class="lang-select">
-                <Select.Value<Locale>>
-                  {(state) => state.selectedOption().toUpperCase()}
-                </Select.Value>
-                <Select.Icon class="lang-select-icon">▾</Select.Icon>
-              </Select.Trigger>
-              <Select.Portal>
-                <Select.Content class="lang-select-content">
-                  <Select.Listbox class="lang-select-listbox" />
-                </Select.Content>
-              </Select.Portal>
-            </Select>
+            <div class="title-actions">
+              <button
+                class="map-panel-toggle"
+                type="button"
+                onClick={() => setShowMap((prev) => !prev)}
+                aria-label={showMap() ? t().actions.expandSidebar : t().actions.showMap}
+              >
+                {showMap() ? t().actions.expandSidebar : t().actions.showMap}
+              </button>
+              <Select<Locale>
+                value={locale()}
+                onChange={(v) => v && setLocale(v)}
+                options={[...SUPPORTED_LOCALES]}
+                itemComponent={(itemProps) => (
+                  <Select.Item item={itemProps.item} class="lang-select-item">
+                    <Select.ItemLabel>{itemProps.item.rawValue.toUpperCase()}</Select.ItemLabel>
+                  </Select.Item>
+                )}
+              >
+                <Select.Trigger class="lang-select">
+                  <Select.Value<Locale>>
+                    {(state) => state.selectedOption().toUpperCase()}
+                  </Select.Value>
+                  <Select.Icon class="lang-select-icon">▾</Select.Icon>
+                </Select.Trigger>
+                <Select.Portal>
+                  <Select.Content class="lang-select-content">
+                    <Select.Listbox class="lang-select-listbox" />
+                  </Select.Content>
+                </Select.Portal>
+              </Select>
+            </div>
           </div>
 
           <div class="id-settings-nav-wrap">

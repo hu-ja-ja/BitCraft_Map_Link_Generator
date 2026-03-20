@@ -45,6 +45,8 @@ const TRANSLATION_SCHEMA = {
     copy: "",
     copied: "",
     open: "",
+    showMap: "",
+    expandSidebar: "",
     clearSelection: "",
     close: "",
   },

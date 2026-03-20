@@ -9,6 +9,8 @@ actions:
   copy: "コピー"
   copied: "コピーしました"
   open: "開く"
+  showMap: "Mapを開く"
+  expandSidebar: "Mapを閉じる"
   clearSelection: "選択解除"
   close: "閉じる"
 

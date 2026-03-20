@@ -9,6 +9,8 @@ actions:
   copy: "Copy"
   copied: "Copied!"
   open: "Open"
+  showMap: "Open Map"
+  expandSidebar: "Close Map"
   clearSelection: "Clear Selection"
   close: "Close"
 
