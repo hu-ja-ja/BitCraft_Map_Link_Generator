@@ -22,6 +22,7 @@ const LOWER_NAMES = new Set(["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"])
 const PLAYER_STORAGE_KEY = "bitcraft.selectedPlayer";
 const INCLUDE_PLAYER_ID_STORAGE_KEY = "bitcraft.includePlayerId";
 const MAP_PANEL_OPEN_STORAGE_KEY = "bitcraft.mapPanelOpen";
+const LOD_WARNING_IGNORED_SESSION_KEY = "bitcraft.lodWarningIgnored";
 const MAX_SELECTED_PLAYERS = 100;
 
 type PersistedPlayer = {
@@ -40,6 +41,9 @@ function AppInner(props: AppProps) {
   const [includePlayerId, setIncludePlayerId] = createSignal(false);
   const [isIncludePlayerIdStorageReady, setIsIncludePlayerIdStorageReady] = createSignal(false);
   const [isMapPanelStorageReady, setIsMapPanelStorageReady] = createSignal(false);
+  const [isLodWarningSessionReady, setIsLodWarningSessionReady] = createSignal(false);
+  const [isLodWarningIgnored, setIsLodWarningIgnored] = createSignal(false);
+  const [lodWarningToastId, setLodWarningToastId] = createSignal<number | null>(null);
   const [savedPlayerIds, setSavedPlayerIds] = createSignal<string[]>([]);
 
   const resName = (name: string) =>
@@ -141,6 +145,13 @@ function AppInner(props: AppProps) {
     setIsMapPanelStorageReady(true);
   }
 
+  function loadLodWarningIgnoredSetting() {
+    if (typeof window === "undefined") return;
+
+    setIsLodWarningIgnored(sessionStorage.getItem(LOD_WARNING_IGNORED_SESSION_KEY) === "true");
+    setIsLodWarningSessionReady(true);
+  }
+
   createEffect(() => {
     if (typeof window === "undefined") return;
     if (!isIncludePlayerIdStorageReady()) return;
@@ -155,6 +166,46 @@ function AppInner(props: AppProps) {
     localStorage.setItem(MAP_PANEL_OPEN_STORAGE_KEY, showMap() ? "true" : "false");
   });
 
+  createEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isLodWarningSessionReady()) return;
+
+    sessionStorage.setItem(LOD_WARNING_IGNORED_SESSION_KEY, isLodWarningIgnored() ? "true" : "false");
+  });
+
+  createEffect(() => {
+    const hasT1 = hasT1Selected();
+    const isIgnored = isLodWarningIgnored();
+    const currentToastId = lodWarningToastId();
+
+    if (!hasT1 || isIgnored) {
+      if (currentToastId !== null) {
+        toaster.dismiss(currentToastId);
+        setLodWarningToastId(null);
+      }
+      return;
+    }
+
+    if (currentToastId !== null) {
+      return;
+    }
+
+    const newToastId = toaster.show((toastProps) => (
+      <Toast toastId={toastProps.toastId} persistent class="toast lod-warning-toast">
+        <Toast.Title class="toast-title lod-warning-toast-title">{renderLodWarning()}</Toast.Title>
+        <button
+          class="lod-warning-toast-ignore"
+          type="button"
+          onClick={() => setIsLodWarningIgnored(true)}
+        >
+          {t().actions.ignore}
+        </button>
+      </Toast>
+    ));
+
+    setLodWarningToastId(newToastId);
+  });
+
   onMount(() => {
     const mobileMedia = window.matchMedia("(max-width: 768px) and (hover: none) and (pointer: coarse)");
     const onViewportChanged = () => syncMapVisibility(mobileMedia);
@@ -162,6 +213,7 @@ function AppInner(props: AppProps) {
 
     loadIncludePlayerIdSetting();
     loadSavedPlayerIds();
+    loadLodWarningIgnoredSetting();
 
     const onPlayerSettingsChanged = () => {
       loadSavedPlayerIds();
@@ -258,10 +310,6 @@ function AppInner(props: AppProps) {
               </Checkbox.Label>
             </Checkbox>
           </div>
-
-          <Show when={hasT1Selected()}>
-            <div class="lod-warning">{renderLodWarning()}</div>
-          </Show>
 
           <div class="url-bar">
             <input

@@ -48,6 +48,7 @@ const TRANSLATION_SCHEMA = {
     showMap: "",
     expandSidebar: "",
     clearSelection: "",
+    ignore: "",
     close: "",
   },
   playerSearch: {

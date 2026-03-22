@@ -1,6 +1,6 @@
 app:
   title: "BitCraft Map Link Generator"
-  lodWarning: "⚠ T1 resources selected — enable {label} in the Map settings to help reduce PC load."
+  lodWarning: "⚠ T1 resources selected — we recommend enabling {label} in the Map settings to help reduce PC load."
   lodLabel: "LoD"
   urlPlaceholder: "Select one or more entries to generate URL"
   mapTitle: "BitCraft Map"
@@ -12,6 +12,7 @@ actions:
   showMap: "Open Map"
   expandSidebar: "Close Map"
   clearSelection: "Clear Selection"
+  ignore: "Ignore"
   close: "Close"
 
 playerSearch:

@@ -1,6 +1,6 @@
 app:
   title: "BitCraft マップリンク生成"
-  lodWarning: "⚠ T1 リソースが選択されています — PC負荷軽減のためマップ設定で {label} を有効にしてください。"
+  lodWarning: "⚠ T1 リソースが選択されています — PC負荷軽減のため、マップ設定で {label} の有効化をおすすめします。"
   lodLabel: "LoD"
   urlPlaceholder: "エントリを選択してURLを生成"
   mapTitle: "BitCraft マップ"
@@ -12,6 +12,7 @@ actions:
   showMap: "Mapを開く"
   expandSidebar: "Mapを閉じる"
   clearSelection: "選択解除"
+  ignore: "無視"
   close: "閉じる"
 
 playerSearch:
