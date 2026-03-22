@@ -20,6 +20,9 @@ importers:
       '@kobalte/core':
         specifier: ^0.13.11
         version: 0.13.11(solid-js@1.9.11)
+      '@tabler/icons-solidjs':
+        specifier: ^3.40.0
+        version: 3.40.0(solid-js@1.9.11)
       astro:
         specifier: ^6.0.8
         version: 6.0.8(@vercel/functions@3.4.3)(rollup@4.59.0)(typescript@5.9.3)(yaml@2.8.3)
@@ -926,6 +929,14 @@ packages:
 
   '@swc/helpers@0.5.19':
     resolution: {integrity: sha512-QamiFeIK3txNjgUTNppE6MiG3p7TdninpZu0E0PbqVh1a9FNLT2FRhisaa4NcaX52XVhA5l7Pk58Ft7Sqi/2sA==}
+
+  '@tabler/icons-solidjs@3.40.0':
+    resolution: {integrity: sha512-xhHKmZhERZnfKfG11iR3fKtij7diBVWpHrfleJjbnMwtm0pfPxIqo/6Y3qUSM+pPJYBFsRiFTMIlbHepTLywxQ==}
+    peerDependencies:
+      solid-js: ^1.4.7
+
+  '@tabler/icons@3.40.0':
+    resolution: {integrity: sha512-V/Q4VgNPKubRTiLdmWjV/zscYcj5IIk+euicUtaVVqF6luSC9rDngYWgST5/yh3Mrg/mYUwRv1YVTk71Jp0twQ==}
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -2959,6 +2970,13 @@ snapshots:
   '@swc/helpers@0.5.19':
     dependencies:
       tslib: 2.8.1
+
+  '@tabler/icons-solidjs@3.40.0(solid-js@1.9.11)':
+    dependencies:
+      '@tabler/icons': 3.40.0
+      solid-js: 1.9.11
+
+  '@tabler/icons@3.40.0': {}
 
   '@types/babel__core@7.20.5':
     dependencies:

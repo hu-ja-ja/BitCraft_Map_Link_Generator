@@ -3,7 +3,8 @@ import { Dialog } from "@kobalte/core/dialog";
 import { Select } from "@kobalte/core/select";
 import { Toast, toaster } from "@kobalte/core/toast";
 import { ToggleButton } from "@kobalte/core/toggle-button";
-import { Check, Github, UserCog } from "lucide-solid";
+import { IconBrandGithub } from "@tabler/icons-solidjs";
+import { Check, UserCog } from "lucide-solid";
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { type TieredResource, type UniqueCategory, type UniqueItem } from "../data/resources";
 import { I18nProvider, useI18n, SUPPORTED_LOCALES, type Locale } from "../i18n/context";
@@ -396,7 +397,7 @@ function AppInner(props: AppProps) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Github class="repo-link-icon" size={16} aria-hidden="true" />
+            <IconBrandGithub class="repo-link-icon" size={16} aria-hidden="true" />
             <span>GitHub</span>
           </a>
         </div>
@@ -422,7 +423,7 @@ function AppInner(props: AppProps) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Github class="repo-link-icon" size={16} aria-hidden="true" />
+          <IconBrandGithub class="repo-link-icon" size={16} aria-hidden="true" />
           <span>GitHub</span>
         </a>
       </div>
