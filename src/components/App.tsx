@@ -36,7 +36,7 @@ type AppProps = {
 
 function AppInner(props: AppProps) {
   const { t, locale, setLocale } = useI18n();
-  const [showMap, setShowMap] = createSignal(true);
+  const [showMap, setShowMap] = createSignal(false);
   const [includePlayerId, setIncludePlayerId] = createSignal(false);
   const [isIncludePlayerIdStorageReady, setIsIncludePlayerIdStorageReady] = createSignal(false);
   const [isMapPanelStorageReady, setIsMapPanelStorageReady] = createSignal(false);
@@ -360,6 +360,7 @@ function AppInner(props: AppProps) {
             class="map-iframe"
             src={iframeUrl()}
             title={t().app.mapTitle}
+            loading="lazy"
             sandbox="allow-scripts allow-same-origin"
             referrerpolicy="no-referrer"
           />
