@@ -14,7 +14,6 @@ type MapUrlOptions = {
 export function useMapUrl(selection: () => Selection[], options?: MapUrlOptions) {
   const url = createMemo(() => {
     const selectedItems = selection();
-    if (selectedItems.length === 0) return "";
 
     const resourceIds = new Set<number>();
     const enemyIds = new Set<number>();
