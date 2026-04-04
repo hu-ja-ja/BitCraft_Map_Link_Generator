@@ -30,6 +30,8 @@ labels:
   selected: "Selected"
   typeHeader: "Type"
   includePlayerId: "Include playerId in URL"
+  autoReloadMap60s: "Auto-reload Map"
+  autoReloadRemaining: "Next reload in {seconds}s"
 
 console:
   applied: "Language applied: {language} ({code})"

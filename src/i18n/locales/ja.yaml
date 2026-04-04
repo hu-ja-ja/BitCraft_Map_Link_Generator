@@ -30,6 +30,8 @@ labels:
   selected: "選択中"
   typeHeader: "種類"
   includePlayerId: "playerId をURLに含める"
+  autoReloadMap60s: "Mapを自動リロード"
+  autoReloadRemaining: "次のリロードまで {seconds}秒"
 
 console:
   applied: "言語設定を適用しました: {language} ({code})"

@@ -66,6 +66,8 @@ const TRANSLATION_SCHEMA = {
     selected: "",
     typeHeader: "",
     includePlayerId: "",
+    autoReloadMap60s: "",
+    autoReloadRemaining: "",
   },
   console: {
     applied: "",

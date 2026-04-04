@@ -23,8 +23,10 @@ const LOWER_NAMES = new Set(["Sailing", "Bait_Fish", "Lake_Fish", "Ocean_Fish"])
 const PLAYER_STORAGE_KEY = "bitcraft.selectedPlayer";
 const INCLUDE_PLAYER_ID_STORAGE_KEY = "bitcraft.includePlayerId";
 const MAP_PANEL_OPEN_STORAGE_KEY = "bitcraft.mapPanelOpen";
+const MAP_AUTO_RELOAD_STORAGE_KEY = "bitcraft.mapAutoReload";
 const LOD_WARNING_IGNORED_SESSION_KEY = "bitcraft.lodWarningIgnored";
 const MAX_SELECTED_PLAYERS = 100;
+const MAP_AUTO_RELOAD_INTERVAL_MS = 60_000;
 
 type PersistedPlayer = {
   entityId: string;
@@ -40,8 +42,13 @@ function AppInner(props: AppProps) {
   const { t, locale, setLocale } = useI18n();
   const [showMap, setShowMap] = createSignal(false);
   const [includePlayerId, setIncludePlayerId] = createSignal(false);
+  const [isMapAutoReloadEnabled, setIsMapAutoReloadEnabled] = createSignal(false);
+  const [mapReloadToken, setMapReloadToken] = createSignal(0);
+  const [mapReloadCycleStartedAt, setMapReloadCycleStartedAt] = createSignal<number | null>(null);
+  const [mapReloadNow, setMapReloadNow] = createSignal(Date.now());
   const [isIncludePlayerIdStorageReady, setIsIncludePlayerIdStorageReady] = createSignal(false);
   const [isMapPanelStorageReady, setIsMapPanelStorageReady] = createSignal(false);
+  const [isMapAutoReloadStorageReady, setIsMapAutoReloadStorageReady] = createSignal(false);
   const [isLodWarningSessionReady, setIsLodWarningSessionReady] = createSignal(false);
   const [isLodWarningIgnored, setIsLodWarningIgnored] = createSignal(false);
   const [lodWarningToastId, setLodWarningToastId] = createSignal<number | null>(null);
@@ -59,6 +66,32 @@ function AppInner(props: AppProps) {
     includePlayerId,
     playerIds: savedPlayerIds,
   });
+
+  const iframeSrc = createMemo(() => {
+    const baseSrc = iframeUrl();
+    const token = mapReloadToken();
+
+    const hashIndex = baseSrc.indexOf("#");
+    const urlWithoutHash = hashIndex >= 0 ? baseSrc.slice(0, hashIndex) : baseSrc;
+    const hash = hashIndex >= 0 ? baseSrc.slice(hashIndex) : "";
+    const separator = urlWithoutHash.includes("?") ? "&" : "?";
+
+    return `${urlWithoutHash}${separator}refresh=${token}${hash}`;
+  });
+
+  const mapReloadElapsedMs = createMemo(() => {
+    const startedAt = mapReloadCycleStartedAt();
+    if (startedAt === null) {
+      return 0;
+    }
+
+    const elapsed = mapReloadNow() - startedAt;
+    return Math.max(0, Math.min(MAP_AUTO_RELOAD_INTERVAL_MS, elapsed));
+  });
+
+  const mapReloadProgressPercent = createMemo(() =>
+    (mapReloadElapsedMs() / MAP_AUTO_RELOAD_INTERVAL_MS) * 100,
+  );
 
   const upperResources = createMemo(() =>
     props.tieredResources.filter((r) => UPPER_NAMES.has(r.name)),
@@ -133,6 +166,14 @@ function AppInner(props: AppProps) {
     setIsIncludePlayerIdStorageReady(true);
   }
 
+  function loadMapAutoReloadSetting() {
+    if (typeof window === "undefined") return;
+
+    const raw = localStorage.getItem(MAP_AUTO_RELOAD_STORAGE_KEY);
+    setIsMapAutoReloadEnabled(raw === "true");
+    setIsMapAutoReloadStorageReady(true);
+  }
+
   function syncMapVisibility(mobileMedia: MediaQueryList) {
     if (typeof window === "undefined") return;
 
@@ -165,6 +206,13 @@ function AppInner(props: AppProps) {
     if (!isMapPanelStorageReady()) return;
 
     localStorage.setItem(MAP_PANEL_OPEN_STORAGE_KEY, showMap() ? "true" : "false");
+  });
+
+  createEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isMapAutoReloadStorageReady()) return;
+
+    localStorage.setItem(MAP_AUTO_RELOAD_STORAGE_KEY, isMapAutoReloadEnabled() ? "true" : "false");
   });
 
   createEffect(() => {
@@ -207,18 +255,54 @@ function AppInner(props: AppProps) {
     setLodWarningToastId(newToastId);
   });
 
+  createEffect(() => {
+    if (!showMap()) {
+      setMapReloadCycleStartedAt(null);
+      return;
+    }
+
+    const initialNow = Date.now();
+    setMapReloadToken(initialNow);
+    setMapReloadNow(initialNow);
+
+    if (!isMapAutoReloadEnabled()) {
+      setMapReloadCycleStartedAt(null);
+      return;
+    }
+
+    setMapReloadCycleStartedAt(initialNow);
+
+    const clockTimer = setInterval(() => {
+      setMapReloadNow(Date.now());
+    }, 200);
+
+    const timer = setInterval(() => {
+      const now = Date.now();
+      setMapReloadToken(now);
+      setMapReloadCycleStartedAt(now);
+      setMapReloadNow(now);
+    }, MAP_AUTO_RELOAD_INTERVAL_MS);
+
+    onCleanup(() => {
+      clearInterval(clockTimer);
+      clearInterval(timer);
+    });
+  });
+
   onMount(() => {
     const mobileMedia = window.matchMedia("(max-width: 768px) and (hover: none) and (pointer: coarse)");
     const onViewportChanged = () => syncMapVisibility(mobileMedia);
     onViewportChanged();
 
     loadIncludePlayerIdSetting();
+    loadMapAutoReloadSetting();
     loadSavedPlayerIds();
     loadLodWarningIgnoredSetting();
 
     const onPlayerSettingsChanged = () => {
       loadSavedPlayerIds();
       loadIncludePlayerIdSetting();
+      loadMapAutoReloadSetting();
     };
     window.addEventListener("player-settings-changed", onPlayerSettingsChanged);
     window.addEventListener("storage", onPlayerSettingsChanged);
@@ -405,9 +489,35 @@ function AppInner(props: AppProps) {
 
       <Show when={showMap()}>
         <div class="panel-right">
+          <div class="map-top-overlay">
+            <div class="map-top-overlay-progress-track" aria-hidden="true">
+              <div
+                class="map-top-overlay-progress-fill"
+                style={{ width: `${mapReloadProgressPercent()}%` }}
+              />
+            </div>
+
+            <div class="map-top-overlay-actions">
+              <Checkbox
+                class="map-top-overlay-checkbox"
+                checked={isMapAutoReloadEnabled()}
+                onChange={setIsMapAutoReloadEnabled}
+              >
+                <Checkbox.Input class="player-id-checkbox-input" />
+                <Checkbox.Control class="player-id-checkbox-control">
+                  <Checkbox.Indicator class="player-id-checkbox-indicator">
+                    <Check size={14} aria-hidden="true" />
+                  </Checkbox.Indicator>
+                </Checkbox.Control>
+                <Checkbox.Label class="map-top-overlay-checkbox-label">
+                  {t().labels.autoReloadMap60s}
+                </Checkbox.Label>
+              </Checkbox>
+            </div>
+          </div>
           <iframe
             class="map-iframe"
-            src={iframeUrl()}
+            src={iframeSrc()}
             title={t().app.mapTitle}
             loading="lazy"
             sandbox="allow-scripts allow-same-origin"
