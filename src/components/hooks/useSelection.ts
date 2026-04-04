@@ -92,5 +92,13 @@ export function useSelection() {
     setSelection([]);
   }
 
-  return { selection, toggleTiered, toggleUnique, isTieredSelected, isUniqueSelected, clear };
+  return {
+    selection,
+    setSelection,
+    toggleTiered,
+    toggleUnique,
+    isTieredSelected,
+    isUniqueSelected,
+    clear,
+  };
 }

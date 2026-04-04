@@ -12,6 +12,7 @@ import type { ResourceTranslationKey, UniqueItemTranslationKey } from "../i18n/t
 import PlayerSearch from "./PlayerSearch";
 import { useSelection } from "./hooks/useSelection";
 import { useMapUrl } from "./hooks/useMapUrl";
+import { parseSiteUrlState, useSiteUrlState } from "./hooks/useSiteUrlState";
 import ResourceTable from "./ResourceTable";
 import "./App.css";
 
@@ -53,6 +54,7 @@ function AppInner(props: AppProps) {
   const [isLodWarningIgnored, setIsLodWarningIgnored] = createSignal(false);
   const [lodWarningToastId, setLodWarningToastId] = createSignal<number | null>(null);
   const [savedPlayerIds, setSavedPlayerIds] = createSignal<string[]>([]);
+  const [isSiteUrlSyncReady, setIsSiteUrlSyncReady] = createSignal(false);
 
   const resName = (name: string) =>
     t().resourceNames[name as ResourceTranslationKey] ?? name;
@@ -60,9 +62,22 @@ function AppInner(props: AppProps) {
   const uniqueItemLabel = (item: UniqueItem) =>
     t().uniqueItemNames[item.translationKey as UniqueItemTranslationKey] ?? item.name;
 
-  const { selection, toggleTiered, toggleUnique, isTieredSelected, isUniqueSelected, clear } =
+  const {
+    selection,
+    setSelection,
+    toggleTiered,
+    toggleUnique,
+    isTieredSelected,
+    isUniqueSelected,
+    clear,
+  } =
     useSelection();
   const { url, iframeUrl, hasT1Selected } = useMapUrl(selection, {
+    includePlayerId,
+    playerIds: savedPlayerIds,
+  });
+  const { queryString } = useSiteUrlState({
+    selection,
     includePlayerId,
     playerIds: savedPlayerIds,
   });
@@ -194,6 +209,36 @@ function AppInner(props: AppProps) {
     setIsLodWarningSessionReady(true);
   }
 
+  function restoreStateFromSiteUrl() {
+    if (typeof window === "undefined") {
+      return {
+        hasSelectionParam: false,
+        hasPlayerIdParam: false,
+      };
+    }
+
+    const parsed = parseSiteUrlState({
+      search: window.location.search,
+      tieredResources: props.tieredResources,
+      uniqueCategories: props.uniqueCategories,
+    });
+
+    if (parsed.hasSelectionParam) {
+      setSelection(parsed.selection);
+    }
+
+    if (parsed.hasPlayerIdParam) {
+      setSavedPlayerIds(parsed.playerIds.slice(0, MAX_SELECTED_PLAYERS));
+      setIncludePlayerId(parsed.playerIds.length > 0);
+      setIsIncludePlayerIdStorageReady(true);
+    }
+
+    return {
+      hasSelectionParam: parsed.hasSelectionParam,
+      hasPlayerIdParam: parsed.hasPlayerIdParam,
+    };
+  }
+
   createEffect(() => {
     if (typeof window === "undefined") return;
     if (!isIncludePlayerIdStorageReady()) return;
@@ -220,6 +265,18 @@ function AppInner(props: AppProps) {
     if (!isLodWarningSessionReady()) return;
 
     sessionStorage.setItem(LOD_WARNING_IGNORED_SESSION_KEY, isLodWarningIgnored() ? "true" : "false");
+  });
+
+  createEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isSiteUrlSyncReady()) return;
+
+    const nextQuery = queryString();
+    const nextPath = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}`;
+    const currentPath = `${window.location.pathname}${window.location.search}`;
+    if (nextPath === currentPath) return;
+
+    window.history.replaceState(window.history.state, "", nextPath);
   });
 
   createEffect(() => {
@@ -294,14 +351,24 @@ function AppInner(props: AppProps) {
     const onViewportChanged = () => syncMapVisibility(mobileMedia);
     onViewportChanged();
 
-    loadIncludePlayerIdSetting();
+    const restoredFromUrl = restoreStateFromSiteUrl();
+
+    if (!restoredFromUrl.hasPlayerIdParam) {
+      loadIncludePlayerIdSetting();
+    }
     loadMapAutoReloadSetting();
-    loadSavedPlayerIds();
+    if (!restoredFromUrl.hasPlayerIdParam) {
+      loadSavedPlayerIds();
+    }
     loadLodWarningIgnoredSetting();
+    setIsSiteUrlSyncReady(true);
 
     const onPlayerSettingsChanged = () => {
-      loadSavedPlayerIds();
-      loadIncludePlayerIdSetting();
+      const hasPlayerIdParam = new URLSearchParams(window.location.search).has("playerId");
+      if (!hasPlayerIdParam) {
+        loadSavedPlayerIds();
+        loadIncludePlayerIdSetting();
+      }
       loadMapAutoReloadSetting();
     };
     window.addEventListener("player-settings-changed", onPlayerSettingsChanged);
