@@ -28,6 +28,9 @@ const MAP_AUTO_RELOAD_STORAGE_KEY = "bitcraft.mapAutoReload";
 const LOD_WARNING_IGNORED_SESSION_KEY = "bitcraft.lodWarningIgnored";
 const MAX_SELECTED_PLAYERS = 100;
 const MAP_AUTO_RELOAD_INTERVAL_MS = 60_000;
+const MAP_AUTO_RELOAD_CONFIRM_AFTER_MS = 2 * 60 *  60 * 1000;
+const MAP_AUTO_RELOAD_CONFIRM_GRACE_MS = 100_000;
+const MAP_AUTO_RELOAD_CONFIRM_GRACE_SECONDS = MAP_AUTO_RELOAD_CONFIRM_GRACE_MS / 1000;
 
 type PersistedPlayer = {
   entityId: string;
@@ -53,6 +56,9 @@ function AppInner(props: AppProps) {
   const [isLodWarningSessionReady, setIsLodWarningSessionReady] = createSignal(false);
   const [isLodWarningIgnored, setIsLodWarningIgnored] = createSignal(false);
   const [lodWarningToastId, setLodWarningToastId] = createSignal<number | null>(null);
+  const [mapAutoReloadConfirmCycleStartedAt, setMapAutoReloadConfirmCycleStartedAt] =
+    createSignal<number | null>(null);
+  const [mapAutoReloadConfirmToastId, setMapAutoReloadConfirmToastId] = createSignal<number | null>(null);
   const [savedPlayerIds, setSavedPlayerIds] = createSignal<string[]>([]);
   const [isSiteUrlSyncReady, setIsSiteUrlSyncReady] = createSignal(false);
 
@@ -125,6 +131,14 @@ function AppInner(props: AppProps) {
         {afterLabel}
       </>
     );
+  };
+
+  const dismissMapAutoReloadConfirmToast = () => {
+    const currentToastId = mapAutoReloadConfirmToastId();
+    if (currentToastId === null) return;
+
+    toaster.dismiss(currentToastId);
+    setMapAutoReloadConfirmToastId(null);
   };
 
   async function copyUrl() {
@@ -310,6 +324,91 @@ function AppInner(props: AppProps) {
     ));
 
     setLodWarningToastId(newToastId);
+  });
+
+  createEffect(() => {
+    const isMapVisible = showMap();
+    const isEnabled = isMapAutoReloadEnabled();
+    const cycleStartedAt = mapAutoReloadConfirmCycleStartedAt();
+
+    if (!isMapVisible || !isEnabled) {
+      dismissMapAutoReloadConfirmToast();
+      if (cycleStartedAt !== null) {
+        setMapAutoReloadConfirmCycleStartedAt(null);
+      }
+      return;
+    }
+
+    const startedAt = cycleStartedAt ?? Date.now();
+    if (cycleStartedAt === null) {
+      setMapAutoReloadConfirmCycleStartedAt(startedAt);
+    }
+
+    const elapsed = Date.now() - startedAt;
+    const confirmDelay = Math.max(0, MAP_AUTO_RELOAD_CONFIRM_AFTER_MS - elapsed);
+    let autoDisableTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const confirmTimer = setTimeout(() => {
+      if (!showMap() || !isMapAutoReloadEnabled()) return;
+      if (mapAutoReloadConfirmToastId() !== null) return;
+
+      const toastId = toaster.show((toastProps) => (
+        <Toast toastId={toastProps.toastId} persistent class="toast auto-reload-confirm-toast">
+          <Toast.Title class="toast-title auto-reload-confirm-toast-title">
+            {t().app.autoReloadConfirm}
+          </Toast.Title>
+          <button
+            class="auto-reload-confirm-toast-continue"
+            type="button"
+            onClick={() => {
+              if (mapAutoReloadConfirmToastId() === toastProps.toastId) {
+                setMapAutoReloadConfirmToastId(null);
+              }
+
+              toaster.dismiss(toastProps.toastId);
+              setMapAutoReloadConfirmCycleStartedAt(Date.now());
+            }}
+          >
+            {t().actions.resume}
+          </button>
+        </Toast>
+      ));
+      setMapAutoReloadConfirmToastId(toastId);
+
+      autoDisableTimer = setTimeout(() => {
+        if (mapAutoReloadConfirmToastId() !== toastId) return;
+
+        setIsMapAutoReloadEnabled(false);
+        setMapAutoReloadConfirmCycleStartedAt(null);
+        setMapAutoReloadConfirmToastId(null);
+        toaster.dismiss(toastId);
+
+        toaster.show((toastProps) => (
+          <Toast toastId={toastProps.toastId} persistent class="toast auto-reload-stopped-toast">
+            <Toast.Title class="toast-title auto-reload-stopped-toast-title">
+              {t().app.autoReloadStoppedNoResponse.replace(
+                "{seconds}",
+                String(MAP_AUTO_RELOAD_CONFIRM_GRACE_SECONDS),
+              )}
+            </Toast.Title>
+            <button
+              class="auto-reload-stopped-toast-close"
+              type="button"
+              onClick={() => toaster.dismiss(toastProps.toastId)}
+            >
+              {t().actions.close}
+            </button>
+          </Toast>
+        ));
+      }, MAP_AUTO_RELOAD_CONFIRM_GRACE_MS);
+    }, confirmDelay);
+
+    onCleanup(() => {
+      clearTimeout(confirmTimer);
+      if (autoDisableTimer !== null) {
+        clearTimeout(autoDisableTimer);
+      }
+    });
   });
 
   createEffect(() => {

@@ -4,6 +4,8 @@ app:
   lodLabel: "LoD"
   urlPlaceholder: "エントリを選択してURLを生成"
   mapTitle: "BitCraft マップ"
+  autoReloadConfirm: "Map自動リロードが2時間継続中です。続行しますか？"
+  autoReloadStoppedNoResponse: "{seconds}秒以内に応答がなかったため、Map自動リロードをOFFにしました"
 
 actions:
   copy: "コピー"
@@ -14,6 +16,7 @@ actions:
   clearSelection: "選択解除"
   ignore: "無視"
   close: "閉じる"
+  resume: "続行"
 
 playerSearch:
   label: "ユーザー検索"

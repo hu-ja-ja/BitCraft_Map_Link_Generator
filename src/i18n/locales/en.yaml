@@ -4,6 +4,8 @@ app:
   lodLabel: "LoD"
   urlPlaceholder: "Select one or more entries to generate URL"
   mapTitle: "BitCraft Map"
+  autoReloadConfirm: "Map auto-reload has been running for 2 hours. Continue?"
+  autoReloadStoppedNoResponse: "Map auto-reload was turned OFF because there was no response within {seconds}s"
 
 actions:
   copy: "Copy"
@@ -14,6 +16,7 @@ actions:
   clearSelection: "Clear Selection"
   ignore: "Ignore"
   close: "Close"
+  resume: "Continue"
 
 playerSearch:
   label: "User search"

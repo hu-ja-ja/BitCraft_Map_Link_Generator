@@ -40,6 +40,8 @@ const TRANSLATION_SCHEMA = {
     lodLabel: "",
     urlPlaceholder: "",
     mapTitle: "",
+    autoReloadConfirm: "",
+    autoReloadStoppedNoResponse: "",
   },
   actions: {
     copy: "",
@@ -50,6 +52,7 @@ const TRANSLATION_SCHEMA = {
     clearSelection: "",
     ignore: "",
     close: "",
+    resume: "",
   },
   playerSearch: {
     label: "",
