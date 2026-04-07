@@ -83,6 +83,17 @@ Astro 側は GitHub Pages 用の static 出力のみです。Vercel では Astro
   - フロントエンド側の検索先を上書きしたいときのみ設定
   - 通常は未設定で `https://bitcraft-map-link-generator.vercel.app/api/players` を使う
 
+- `PLAYER_API_ALLOWED_ORIGINS` (Server only, optional)
+  - CORS で許可する Origin のカンマ区切り一覧
+  - 例: `https://hu-ja-ja.github.io`
+  - 未設定時は `https://hu-ja-ja.github.io` のみを既定値として使用
+
+### API セキュリティ運用メモ
+
+- API は許可 Origin 以外を `403` で拒否します（GitHub Pages のみ許可）
+- クエリ長上限（64文字）と upstream タイムアウト（3秒）を設定済みです
+- Vercel Firewall で `/api/players` 向けの Rate Limit ルール設定を推奨します
+
 ## ディレクトリ概要
 
 - `src/components`: SolidJS UI
