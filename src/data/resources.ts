@@ -184,7 +184,7 @@ function buildSyntheticUniqueItem(name: string, ids: number[]): UniqueItem {
 }
 
 function sortUniqueItemsByTranslationKey(items: UniqueItem[]): UniqueItem[] {
-  return [...items].sort((left, right) => {
+  return items.toSorted((left, right) => {
     const leftIndex = UNIQUE_ITEM_TRANSLATION_KEY_ORDER.get(left.translationKey) ?? Number.MAX_SAFE_INTEGER;
     const rightIndex =
       UNIQUE_ITEM_TRANSLATION_KEY_ORDER.get(right.translationKey) ?? Number.MAX_SAFE_INTEGER;
