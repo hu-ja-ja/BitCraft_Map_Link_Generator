@@ -464,8 +464,8 @@ function AppInner(props: AppProps) {
 
     const onPlayerSettingsChanged = () => {
       const hasPlayerIdParam = new URLSearchParams(window.location.search).has("playerId");
+      loadSavedPlayerIds();
       if (!hasPlayerIdParam) {
-        loadSavedPlayerIds();
         loadIncludePlayerIdSetting();
       }
       loadMapAutoReloadSetting();
