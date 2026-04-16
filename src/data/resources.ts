@@ -36,6 +36,7 @@ export type ResourceAppData = {
 
 type RawItem = {
   id: number;
+  sub_id?: number;
   name?: string;
   spawn?: boolean;
 };
@@ -125,9 +126,11 @@ const UNIQUE_ITEM_TRANSLATION_KEYS: Record<string, UniqueItemTranslationKey> = {
   "Flint Pile": "Flint_Pile",
   "Wild Grains": "Wild_Grains",
   "Wild Starbulb Plant": "Wild_Starbulb_Plant",
+  "Peach Tree": "Peach_Tree",
   "Salt Deposit": "Salt_Deposit",
   Ancient: "Ancient",
   Den: "Den",
+  Beehive: "Beehive",
   Jakyl: "Jakyl",
   "Alpha Jakyl": "Alpha_Jakyl",
   "King Jakyl": "King_Jakyl",
@@ -144,6 +147,10 @@ const UNIQUE_ITEM_TRANSLATION_KEYS: Record<string, UniqueItemTranslationKey> = {
   Queen: "Queen",
 };
 
+const UNIQUE_ITEM_TRANSLATION_KEY_ORDER = new Map<UniqueItemTranslationKey, number>(
+  Object.values(UNIQUE_ITEM_TRANSLATION_KEYS).map((key, index) => [key, index]),
+);
+
 function toUniqueItemTranslationKey(name: string): UniqueItemTranslationKey {
   const key = UNIQUE_ITEM_TRANSLATION_KEYS[name];
   if (!key) {
@@ -154,8 +161,15 @@ function toUniqueItemTranslationKey(name: string): UniqueItemTranslationKey {
 
 function buildUniqueItem(item: RawItem): UniqueItem {
   const name = item.name ?? String(item.id);
+  const ids = [item.id];
+  const subId = item.sub_id;
+
+  if (typeof subId === "number" && Number.isInteger(subId)) {
+    ids.push(subId);
+  }
+
   return {
-    ids: [item.id],
+    ids,
     name,
     translationKey: toUniqueItemTranslationKey(name),
   };
@@ -169,22 +183,38 @@ function buildSyntheticUniqueItem(name: string, ids: number[]): UniqueItem {
   };
 }
 
+function sortUniqueItemsByTranslationKey(items: UniqueItem[]): UniqueItem[] {
+  return [...items].sort((left, right) => {
+    const leftIndex = UNIQUE_ITEM_TRANSLATION_KEY_ORDER.get(left.translationKey) ?? Number.MAX_SAFE_INTEGER;
+    const rightIndex =
+      UNIQUE_ITEM_TRANSLATION_KEY_ORDER.get(right.translationKey) ?? Number.MAX_SAFE_INTEGER;
+
+    if (leftIndex !== rightIndex) {
+      return leftIndex - rightIndex;
+    }
+
+    return left.translationKey.localeCompare(right.translationKey);
+  });
+}
+
 function buildUniqueCategory(name: string): UniqueCategory {
   const uniqueGroups = resourceDocument.Unique ?? {};
   const items =
     name === "Monster"
       ? getEnabledItems(resourceDocument.Monster).map(buildUniqueItem)
-      : [
-          ...getEnabledItems(uniqueGroups.Resource).map(buildUniqueItem),
-          buildSyntheticUniqueItem(
-            "Ancient",
-            getEnabledItems(uniqueGroups.Ancient).map((item) => item.id),
-          ),
-          buildSyntheticUniqueItem(
-            "Den",
-            getEnabledItems(uniqueGroups.Den).map((item) => item.id),
-          ),
-        ].filter((item) => item.ids.length > 0);
+      : sortUniqueItemsByTranslationKey(
+          [
+            ...getEnabledItems(uniqueGroups.Resource).map(buildUniqueItem),
+            buildSyntheticUniqueItem(
+              "Ancient",
+              getEnabledItems(uniqueGroups.Ancient).map((item) => item.id),
+            ),
+            buildSyntheticUniqueItem(
+              "Den",
+              getEnabledItems(uniqueGroups.Den).map((item) => item.id),
+            ),
+          ].filter((item) => item.ids.length > 0),
+        );
 
   return {
     name,

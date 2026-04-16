@@ -68,8 +68,13 @@ Unique:
       name: Wild Grains
     - id: 156
       name: Wild Starbulb Plant
+    - id: 1423043113
+      name: Peach Tree
     - id: 158
       name: Salt Deposit
+    - id: 451150522
+      sub_id: 405891180
+      name: Beehive
   Den:
     - id: 158059491
       spawn: false

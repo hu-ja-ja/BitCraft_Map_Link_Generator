@@ -65,6 +65,7 @@ function isItem(value) {
 function normalizeItem(item) {
   return {
     id: item.id,
+    ...(Number.isInteger(item.sub_id) ? { sub_id: item.sub_id } : {}),
     ...(typeof item.name === "string" && item.name.length > 0 ? { name: item.name } : {}),
     ...(item.spawn === false ? { spawn: false } : {}),
   };
@@ -234,6 +235,10 @@ function toOutputItem(resource, templateItem, includeName) {
   const item = { id: resource.id };
   const name = preferTemplateName(resource, templateItem);
 
+  if (Number.isInteger(templateItem?.sub_id)) {
+    item.sub_id = templateItem.sub_id;
+  }
+
   if (includeName && name) {
     item.name = name;
   }
@@ -370,6 +375,10 @@ async function readTemplateDocument() {
 
 function formatItem(item, baseIndent, includeName) {
   const lines = [`${baseIndent}- id: ${item.id}`];
+
+  if (Number.isInteger(item.sub_id)) {
+    lines.push(`${baseIndent}  sub_id: ${item.sub_id}`);
+  }
 
   if (includeName && typeof item.name === "string" && item.name.length > 0) {
     lines.push(`${baseIndent}  name: ${item.name}`);
