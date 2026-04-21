@@ -4,7 +4,7 @@ import { Select } from "@kobalte/core/select";
 import { Toast, toaster } from "@kobalte/core/toast";
 import { ToggleButton } from "@kobalte/core/toggle-button";
 import { IconBrandGithub } from "@tabler/icons-solidjs";
-import { Check, UserCog } from "lucide-solid";
+import { Check, UserCog, Map as MapIcon, DatabaseSearch } from "lucide-solid";
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { type TieredResource, type UniqueCategory, type UniqueItem } from "../data/resources";
 import { I18nProvider, useI18n, SUPPORTED_LOCALES, type Locale } from "../i18n/context";
@@ -669,6 +669,26 @@ function AppInner(props: AppProps) {
         <div class="panel-footer">
           <a
             class="repo-link"
+            href="https://map.bitjita.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MapIcon class="repo-link-icon" size={16} aria-hidden="true" />
+            <span>BitCraft Map</span>
+          </a>
+          <span class="footer-separator">|</span>
+          <a
+            class="repo-link"
+            href="https://bitjita.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <DatabaseSearch class="repo-link-icon" size={16} aria-hidden="true" />
+            <span>BitJita</span>
+          </a>
+          <span class="footer-separator">|</span>
+          <a
+            class="repo-link"
             href="https://github.com/hu-ja-ja/BitCraft_Map_Link_Generator"
             target="_blank"
             rel="noopener noreferrer"
@@ -719,6 +739,26 @@ function AppInner(props: AppProps) {
       </Show>
 
       <div class="panel-footer panel-footer-below-map">
+        <a
+          class="repo-link"
+          href="https://bitcraft-map.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <MapIcon class="repo-link-icon" size={16} aria-hidden="true" />
+          <span>BitCraft Map</span>
+        </a>
+        <span class="footer-separator">|</span>
+        <a
+          class="repo-link"
+          href="https://bitjita.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <DatabaseSearch class="repo-link-icon" size={16} aria-hidden="true" />
+          <span>BitJita</span>
+        </a>
+        <span class="footer-separator">|</span>
         <a
           class="repo-link"
           href="https://github.com/hu-ja-ja/BitCraft_Map_Link_Generator"
