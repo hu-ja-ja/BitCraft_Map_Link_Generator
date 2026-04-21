@@ -428,20 +428,46 @@ function AppInner(props: AppProps) {
 
     setMapReloadCycleStartedAt(initialNow);
 
-    const clockTimer = setInterval(() => {
-      setMapReloadNow(Date.now());
-    }, 200);
+    const checkAndReload = () => {
+      const startedAt = mapReloadCycleStartedAt();
+      if (startedAt === null) {
+        return;
+      }
 
-    const timer = setInterval(() => {
       const now = Date.now();
+      if (now - startedAt < MAP_AUTO_RELOAD_INTERVAL_MS) {
+        return;
+      }
+
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") {
+        return;
+      }
+
       setMapReloadToken(now);
       setMapReloadCycleStartedAt(now);
       setMapReloadNow(now);
-    }, MAP_AUTO_RELOAD_INTERVAL_MS);
+    };
+
+    const clockTimer = setInterval(() => {
+      setMapReloadNow(Date.now());
+      checkAndReload();
+    }, 200);
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkAndReload();
+      }
+    };
+
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", onVisibilityChange);
+    }
 
     onCleanup(() => {
       clearInterval(clockTimer);
-      clearInterval(timer);
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", onVisibilityChange);
+      }
     });
   });
 
