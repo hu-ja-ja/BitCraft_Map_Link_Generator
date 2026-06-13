@@ -669,7 +669,7 @@ function AppInner(props: AppProps) {
         <div class="panel-footer">
           <a
             class="repo-link"
-            href="https://map.bitjita.com/"
+            href="https://bitcraftmap.com/"
             target="_blank"
             rel="noopener noreferrer"
           >
