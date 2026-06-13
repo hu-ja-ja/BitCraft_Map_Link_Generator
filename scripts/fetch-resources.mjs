@@ -48,9 +48,7 @@ const UNIQUE_RESOURCE_NAMES = new Set([
   "Salt Deposit",
 ]);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, "..");
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const resourceDir = path.join(projectRoot, "src", "resource");
 const generatedYamlPath = path.join(resourceDir, "resource.generated.yaml");
 
